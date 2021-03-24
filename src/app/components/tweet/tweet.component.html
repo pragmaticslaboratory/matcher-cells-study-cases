@@ -1,4 +1,4 @@
-<div class="tw-block-parent">
+<div class="tw-block-parent animated fadeIn fast" >
     <div class="timeline-TweetList-tweet">
       <div class="timeline-Tweet">
         <div class="timeline-Tweet-brand">
@@ -11,18 +11,15 @@
                     <div class="Avatar"> </div>
                 </span>
                 <span class="TweetAuthor-name">
-                    TwitterDev 
+                    {{ username}}
                 </span>
                 <span class="Icon Icon--verified"></span>
-                <span class="TweetAuthor-screenName">@TwitterDev </span>
+                <span class="TweetAuthor-screenName">@{{username}} </span>
             </div>
         </div>
         <div class="timeline-Tweet-text">
-            We're excited for the inaugural Twitter Community Meetup
-            <a href="#">@TwitterSeattle</a>
-            <span>tomorrow! </span>
-            <a href="#">#TapIntoTwitter </a>
-            <a href="#">meetup.com/Seattle-Twitte… </a>
+            {{ content }}
+            <a href="#" *ngFor="let item of hashtags"> {{item}} </a>
         </div>
         <div class="timeline-Tweet-metadata"><span class="timeline-Tweet-timestamp">9h</span></div>
         <ul class="timeline-Tweet-actions">

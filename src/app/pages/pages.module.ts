@@ -8,7 +8,12 @@ import { HomeComponent } from './home/home.component';
 import { PagesComponent } from './pages.component';
 import { ComponentsModule } from '../components/components.module';
 import { ModelsModule } from '../models/models.module';
-
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -26,7 +31,13 @@ import { ModelsModule } from '../models/models.module';
     ComponentsModule,
     ModelsModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    DragDropModule
   ]
 })
 export class PagesModule { }
