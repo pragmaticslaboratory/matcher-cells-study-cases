@@ -1,101 +1,81 @@
-.home-container{
-    margin-left: auto; 
-    margin-right: auto;
+.logo{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
 }
 
-.tweet-list{
-    overflow-x: hidden;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    height: 675px;
-}
+/*#region IconCss*/
 
-.list-group {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border: 1px solid #ccc;
-    border-radius: .5em;
-    width: 20em;
-}
-
-.list-group li {
-    border-top: 1px solid #ccc;
-    padding: .5em;
-    display: flex;
-    justify-content: space-between;
+.wrapper {
+    position: absolute;
+    z-index:200;
+    justify-content: space-around;
     align-items: center;
-}
-
-.list-group li:first-child {
-    border-top: 0;
-}
-
-.list-group .badge {
-    background-color: rebeccapurple;
-    color: #fff;
-    font-weight: bold;
-    font-size: 80%;
-    border-radius: 10em;
-    min-width: 1.5em;
-    padding: .25em;
-    text-align: center
-}
-
-mat-chip {
-    justify-content: space-between;
-}
-
-.list-rules{
-    width: 100%;
-}
-
-/* DRAG AND DROP */
-  
-.example-list {
-    border: solid 1px #ccc;
-    min-height: 60px;
-    background: white;
-    border-radius: 4px;
-    overflow: hidden;
-    display: block;
-}
-  
-.example-box {
-    padding: 20px 10px;
-    border-bottom: solid 1px #ccc;
-    color: rgba(0, 0, 0, 0.87);
-    display: flex;
-    flex-direction: row;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%,0%);
+    transition: all .4s ease-out;
+  }
+  .wrapperEnd{
+    position: absolute;
+    z-index:200;
+    justify-content: space-around;
     align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    cursor: move;
-    background: white;
-    font-size: 14px;
-}
-  
-.cdk-drag-preview {
-    box-sizing: border-box;
-    border-radius: 4px;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-                0 8px 10px 1px rgba(0, 0, 0, 0.14),
-                0 3px 14px 2px rgba(0, 0, 0, 0.12);
-}
-  
-.cdk-drag-placeholder {
-    opacity: 0;
-}
+    transform: translate(-40%,0%);
+    top: 85%;
+    left:50%;
+    transition: all .1s ease-out;
+  }
+  .wrapper__links {
+    display: flex;
+    width: 75%;
+  }
 
-.cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
+.social-link--linkedin {
+    color: #2d76b0;
+  }
+  .social-link--github {
+    color: #000;
+  }
+  .social-link--instagram {
+    color: #9a2970;
+  }
+  .social-link--dribbble {
+    color: #b53561;
+  }
+  .social-link .social-svg {
+    width: 4.8rem;
+    height: 4.8rem;
+  }
+  .social-link .social-svg .social-group__icon {
+    fill: #191308;
+    transition: all .2s;
+  }
+  .social-link .social-svg .social-group__inner-circle {
+    fill: transparent;
+    transition: all .2s;
+  }
+  .social-link .social-svg .social-group__outline {
+    stroke: #191308;
+    transform-origin: 50% 50%;
+    transition: all .2s;
+  }
+  .social-link .social-svg:hover .social-group__icon, .social-link .social-svg:active .social-group__icon, .social-link .social-svg:focus .social-group__icon {
+    fill: #FFFBFA;
+    transition: all .45s;
+  }
+  .social-link .social-svg:hover .social-group__inner-circle, .social-link .social-svg:active .social-group__inner-circle, .social-link .social-svg:focus .social-group__inner-circle {
+    fill: currentColor;
+    transition: all .45s;
+  }
+  .social-link .social-svg:hover .social-group__inner-circle--instagram, .social-link .social-svg:active .social-group__inner-circle--instagram, .social-link .social-svg:focus .social-group__inner-circle--instagram {
+    fill: url(#simpleInsta) !important;
+  }
+  .social-link .social-svg:hover .social-group__outline, .social-link .social-svg:active .social-group__outline, .social-link .social-svg:focus .social-group__outline {
+    stroke: currentColor;
+    transform: scale(1.1);
+    transition: all .45s;
+  }
   
-.example-box:last-child {
-    border: none;
-}
-  
-.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-  
+  /*#endregion*/

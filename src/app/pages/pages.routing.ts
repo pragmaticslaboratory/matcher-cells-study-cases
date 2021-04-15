@@ -6,6 +6,8 @@ import { RouterModule, Routes } from "@angular/router";
  */
 import { PagesComponent } from './pages.component';
 import { HomeComponent } from './home/home.component';
+import { OfflineComponent } from './offline/offline.component';
+import { TwitterComponent } from './twitter/twitter.component';
 
 const routes: Routes = [
     {
@@ -15,6 +17,16 @@ const routes: Routes = [
           {
             path: '',
             component: HomeComponent, data: { title: 'Home' }
+            
+          },
+          {
+            path: 'offline',
+            component: OfflineComponent, data: { title: 'Offline Case' }
+            
+          },
+          {
+            path: 'twitter',
+            component: TwitterComponent, data: { title: 'Twitter Case' }
             
           }
         ]
