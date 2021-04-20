@@ -13,19 +13,30 @@ import { Rule } from 'src/app/models/match-cells/rules/rule.interface';
 import { Solution } from 'src/app/models/match-cells/solution.model';
 import { SingletonOffline } from '../../models/singletonOffline.model';
 
+
+import {MatDialog} from '@angular/material/dialog';
+import { GenerateInputComponent } from '../../dialogs/generate-input/generate-input.component';
+
+
+
+interface MatchView{
+  text: string,
+  active: boolean
+}
+
+
 @Component({
   selector: 'app-offline',
   templateUrl: './offline.component.html',
   styleUrls: ['./offline.component.css']
 })
-export class OfflineComponent implements OnInit {
+export class OfflineComponent {
 
   favoriteSeason: string = 'Only One Match';
   seasons: string[] = ['Only One Match', 'Multiple Match'];
 
   master_checked: boolean = false;
   master_indeterminate: boolean = true;
-
 
   _match_complete: boolean = false;
   _input: string = '';
@@ -51,10 +62,22 @@ export class OfflineComponent implements OnInit {
       rule: new AddSeed()
     }
   ];
+  
+  _matchViews: MatchView[] = [];
 
-  constructor() { }
+  constructor(public dialog: MatDialog) {}
 
-  ngOnInit(): void {
+  openGenerateInputDialog(): void {
+    const dialogRef = this.dialog.open(GenerateInputComponent, {
+      width: '500px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this._input = result;
+      }
+    });
   }
 
   master_change() {
@@ -135,7 +158,19 @@ export class OfflineComponent implements OnInit {
 
     solution.match(this._input);
 
+    this.getInformationInputMatch();
+
     this._match_complete = true;
+  }
+
+  getInformationInputMatch(){
+    this._matchViews = [];
+    for(let index=0; index < this._input.length; index++){
+      this._matchViews.push({
+        text: this._input[index],
+        active: this.getMatches().findIndex((item) => index === item.index) != -1
+      })
+    }
   }
 
   getMatches(){

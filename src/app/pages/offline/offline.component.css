@@ -14,3 +14,19 @@
     justify-content: center;
     align-items: center;
 }
+
+.list-matches{
+    max-height: 300px;
+    margin-bottom: 10px;
+    overflow-y:scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.skill-list{
+    display : flex;
+    justify-content: between;
+}
+
+.match-token{
+    color: red;
+}

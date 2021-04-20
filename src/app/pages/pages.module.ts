@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { DialogsModule } from '../dialogs/dialogs.module';
 
 
 import { HomeComponent } from './home/home.component';
@@ -18,6 +19,7 @@ import { MatCardModule } from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatInputModule} from '@angular/material/input';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatDialogModule} from '@angular/material/dialog';
 import { OfflineComponent } from './offline/offline.component';
 import { TwitterComponent } from './twitter/twitter.component';
 
@@ -37,6 +39,7 @@ import { TwitterComponent } from './twitter/twitter.component';
     CommonModule,
     ComponentsModule,
     SharedModule,
+    DialogsModule,
     RouterModule,
     FormsModule,
     MatButtonModule,
@@ -45,6 +48,7 @@ import { TwitterComponent } from './twitter/twitter.component';
     MatCheckboxModule,
     MatListModule,
     MatCardModule,
+    MatDialogModule,
     MatRadioModule,
     MatFormFieldModule,
     MatInputModule,

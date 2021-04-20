@@ -14,6 +14,9 @@
                   <span class="input-group-text">Input Trace</span>
                 </div>
                 <input type="text" class="form-control"  placeholder="acbab" [ngModel]="_input" (ngModelChange)="_input = $event.toLowerCase()" >
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" (click)="openGenerateInputDialog()" type="button">Autogenerate</button>
+                </div>
             </div>
     
             <div class="input-group my-3">
@@ -23,9 +26,7 @@
                 <input type="text" class="form-control"  placeholder="abb"  [ngModel]="_token" (ngModelChange)="_token = $event.toLowerCase()">
             </div>
         </div>
-
         
-
         <div class="row my-3">
             <div class="col-md-12 text-center">
                 <button
@@ -55,12 +56,12 @@
             <div class="dropdown-divider my-3"></div>
             
             <div class="text-left my-2">
-                <strong>RESULT:</strong>
+                <strong>RESULT: TOTAL {{ getMatches().length }} MATCHES</strong>
             </div>
             <div *ngIf="getMatches().length == 0">
                 <strong>There were no matches :c</strong>
             </div>
-            <ul class="list-group list-rules mb-5">
+            <ul class="list-group list-rules mb-5 list-matches">
                 <li class="list-group-item" *ngFor="let item of getMatches(); let i = index">
                     MATCH. {{i}} |   Symbol: {{item.token}} - Token Index: {{item.index}}
                 </li>
@@ -68,6 +69,14 @@
 
         </div>
 
+        <section class="section section-light">
+            <h2>Input Match</h2>
+            <div class="skill-list">
+               <p class="skills" *ngFor="let mathView of _matchViews" [ngClass]="{'match-token':mathView.active}">
+                   {{mathView.text}}
+                </p>
+            </div>
+       </section>
         
     </div>
     <div class="col-md-4">
@@ -80,7 +89,7 @@
         <mat-card>
 
             <mat-card-title class="title-card">
-                Evolution Rules
+                Cell-Evolution Rules
             </mat-card-title>
         
             <mat-card-content>
@@ -102,7 +111,7 @@
         <mat-card>
 
             <mat-card-title class="title-card">
-                Post-Evolution Rules
+                Solution-Evolution Rules
             </mat-card-title>
         
             <mat-card-content>
