@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { Cell } from 'src/app/models/match-cells/cell.model';
 import { Evolution } from 'src/app/models/match-cells/evolution/evolution.interface';
 import { MultipleMatch } from 'src/app/models/match-cells/evolution/multipleMatch.model';
@@ -16,10 +16,19 @@ import { SingletonOffline } from '../../models/singletonOffline.model';
 
 import {MatDialog} from '@angular/material/dialog';
 import { GenerateInputComponent } from '../../dialogs/generate-input/generate-input.component';
+import { Star } from '../../models/match-cells/patterns/star.model';
+import { Plus } from '../../models/match-cells/patterns/plus.model';
+import { AddRuleComponent } from '../../dialogs/add-rule/add-rule.component';
+import { ComposableRule } from '../../models/match-cells/rules/composablerule.model';
 
 
 
 interface MatchView{
+  text: string,
+  active: boolean
+}
+
+interface ErrorMessage{
   text: string,
   active: boolean
 }
@@ -41,11 +50,19 @@ export class OfflineComponent {
   _match_complete: boolean = false;
   _input: string = '';
   _token: string = '';
+  
+  
+  _regexActivate: boolean = false;
+  _regexErrorValidator: ErrorMessage = {
+    text: '',
+    active: false
+  }
 
   _tokenArr: string[] = [];
   _tokenPattern: Pattern = null;
   _evolutionRule: Evolution = null;
   _postEvolutionRule: Rule = null;
+
 
   checkbox_list = [
     {
@@ -76,6 +93,20 @@ export class OfflineComponent {
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         this._input = result;
+      }
+    });
+  }
+
+  openAddRuleDialog(): void {
+    const dialogRef = this.dialog.open(AddRuleComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        // xd
       }
     });
   }
@@ -113,7 +144,15 @@ export class OfflineComponent {
   }
 
   generateInitialPattern(){
-    this._tokenArr = [...this._token];
+    if(this._regexActivate){
+      this.generateRegexPattern();
+    }else{
+      this.generateNoRegexPattern(this._token);
+    }
+  }
+  
+  generateNoRegexPattern(token: string){
+    this._tokenArr = [...token];
 
     if(this._tokenArr.length == 1){
       this._tokenPattern = new Symbol(this._tokenArr[0]);
@@ -126,6 +165,57 @@ export class OfflineComponent {
     }
   }
 
+  findCharWithArray(char: string, array: string[]): boolean{
+    return array.findIndex((item) => {
+      return item === char;
+    }) != -1;
+  }
+
+  validateBracesTokenRegex(){
+    let braces: number = 0;
+    let innerElements: number = 0;
+    for (let i = 0; i < this._token.length; ++i) {
+      const curCh = this._token[i];
+      if (curCh == '(') {
+          braces++;
+          continue;
+      } else if (curCh == ')') {
+          braces--;
+          if(braces < 0 || (braces == 0 && innerElements == 0)) return false;
+      }
+      // TIENE QUE HABER UN ELEMENTO ENTRE MEDIO DE LOS BRACES COMO POR EJEMPLO (abc) ((ac)) para evitar los () ((()))
+      if(braces > 0 && !this.findCharWithArray(curCh, ['(',')'])){
+        innerElements++;
+      }
+    }
+    if (braces != 0) {
+      return false;
+    }
+    return true;
+  }
+
+  validateTokenRegex(): boolean{
+    // validar si es solo un elemento (length == 0) que no sea + * ( ) { } [ ]
+    if(this._token.length == 1 && this.findCharWithArray(this._token[0],['+','*','(',')'])){
+      this._regexErrorValidator = {
+        text: 'Token no valid. Remember the characters ( )* or ( )+ are reserved',
+        active: true
+      }
+      return false;
+    }
+    // validator parenthesis
+    if(!this.validateBracesTokenRegex()){
+      this._regexErrorValidator = {
+        text: 'Token no valid. Not valid parenthesis decorator',
+        active: true
+      }
+      return false;
+    }
+
+    return true;
+  }
+
+
   generateEvolutionRule(){
     if(this.favoriteSeason === 'Only One Match'){
       this._evolutionRule = new OnlyOneMatch();
@@ -135,32 +225,50 @@ export class OfflineComponent {
   }
 
   generatePostEvolutionRute(){
+    let rule_list: Rule[] = [];
+    for (const item of this.checkbox_list) {
+      if(item.checked){
+        rule_list.push(item.rule);
+      }
+    }
+    this._postEvolutionRule = new ComposableRule(rule_list);
+   
     // si addseed esta checkeado
-    if(this.checkbox_list[1].checked){
-      this._postEvolutionRule = new AddSeed();
-    }else{
-      this._postEvolutionRule = new Identity();
+    // if(this.checkbox_list[1].checked){
+    //   this._postEvolutionRule = new AddSeed();
+    // }else{
+    //   this._postEvolutionRule = new Identity();
+    // }
+  }
+
+  resetErrorValidator(){
+    this._regexErrorValidator = {
+      text: '',
+      active: false
     }
   }
 
   matchProcess(){
     this._match_complete = false;
-    
+    this.resetErrorValidator();
     SingletonOffline.getInstance().Reset();
 
     this.generateInitialPattern();
 
-    this.generateEvolutionRule();
+    if(!this._regexErrorValidator.active){
+      this.generateEvolutionRule();
     
-    this.generatePostEvolutionRute();
+      this.generatePostEvolutionRute();
 
-    const solution = new Solution([new Cell(this._tokenPattern, new MetaInformation(0))],this._evolutionRule, this._postEvolutionRule);
+      const solution = new Solution([new Cell(this._tokenPattern, new MetaInformation(0))],this._evolutionRule, this._postEvolutionRule);
 
-    solution.match(this._input);
+      solution.match(this._input);
 
-    this.getInformationInputMatch();
+      this.getInformationInputMatch();
 
-    this._match_complete = true;
+      this._match_complete = true;
+    }
+
   }
 
   getInformationInputMatch(){
@@ -177,4 +285,143 @@ export class OfflineComponent {
     return SingletonOffline.getInstance().Matches();
   }
 
+
+  generateRegexPattern(){
+    // IF ERRORS
+    if(!this.validateTokenRegex()){
+      return;
+    }
+    // IF TOKEN DOESN'T HAVE * or + pattern just use the other method
+    if(!this.findCharWithArray('*',[...this._token]) && !this.findCharWithArray('+', [...this._token])){
+      // DELETE BRANCHES AND WORK LIKE A NORMAL STRING
+      const token = this._token.replace(/[-+()\s]/g, '');
+      this.generateNoRegexPattern(token);
+    }else{
+      const MAX_LENGTH: number = this._token.length;
+      let token_array_regex = [...this._token];
+
+      // Ver caso especial de (...)*, siendo (abcdf)* || (acv)*
+      if(token_array_regex[0] == '(' && 
+         this.findCharWithArray(token_array_regex[MAX_LENGTH - 1],['*','+'])
+      ){
+        this._tokenPattern = (token_array_regex[MAX_LENGTH-1] == '*')?
+              new Star(this.generateInnerPattern(token_array_regex.slice(1,MAX_LENGTH-2)))
+              :
+              new Plus(this.generateInnerPattern(token_array_regex.slice(1,MAX_LENGTH-2)));
+        return;
+      }
+      // Sera siempre una secuencia de tipo
+      // Al comenzar el token puede ser de 2 formas
+      // a... ||  b... || f... comenzando por alguna letra
+      // o
+      // empezando por ( para indicar que es clausura o clausura positiva
+      let second_position: number = 0;
+      this._tokenPattern = null;
+      let pattern_left: Pattern = null;
+      let pattern_right: Pattern = null
+      
+      // first
+      if(token_array_regex[0] != '('){
+        pattern_left = new Symbol(token_array_regex[0]);
+        second_position = 1;
+      }else{
+        // es un clausura ( ... )*
+        // debemos encontrar el paretensis derecho o el coso de )
+        let first_end: number = token_array_regex.findIndex((item, index) => {
+          if(index > 0 && item == ')'){
+            return index;
+          }
+        });
+        // hace referencia al valor que esta a la derecha de la paretensis de cierre
+        let star_clausure_first: boolean = token_array_regex[first_end + 1] == '*';
+        let token_inner_first = token_array_regex.slice(1,first_end);
+        let pattern_inner_first: Pattern = this.generateInnerPattern(token_inner_first);
+        pattern_left = (star_clausure_first)?
+                        new Star(
+                          pattern_inner_first
+                        )
+                        :
+                        new Plus(
+                          pattern_inner_first
+                        );
+        second_position = first_end + 2;
+      }
+
+      let actual_position: number = 0;
+
+      // second
+      if(token_array_regex[second_position] != '('){
+        pattern_right = new Symbol(token_array_regex[second_position]);
+        actual_position = second_position + 1;
+      }else{
+        // es un clausura ( ... )*
+        // debemos encontrar el paretensis derecho o el coso de )
+        let second_end: number = token_array_regex.findIndex((item, index) => {
+          if(index > second_position && item == ')'){
+            return index;
+          }
+        });
+        
+        
+        // hace referencia al valor que esta a la derecha de la paretensis de cierre
+        let star_clausure_second: boolean = token_array_regex[second_end + 1] == '*';
+        let token_inner_second = token_array_regex.slice(second_position+1,second_end);
+        let pattern_inner_second: Pattern = this.generateInnerPattern(token_inner_second);
+        pattern_right = (star_clausure_second)?
+                        new Star(
+                          pattern_inner_second
+                        )
+                        :
+                        new Plus(
+                          pattern_inner_second
+                        );
+        actual_position = second_end + 2;
+      }
+      // Generamos una sequence con los 2 primeros token del array
+      this._tokenPattern = new Sequence(pattern_left,pattern_right);
+      // ahora solo right pattern
+      for (let index = actual_position; index < MAX_LENGTH;) {
+        // DERECHO
+        if(token_array_regex[index] != '('){
+          pattern_right = new Symbol(token_array_regex[index]);
+          index++;
+        }else{
+          // es un clausura ( ... )*
+          // debemos encontrar el paretensis derecho o el coso de )
+          let end: number = token_array_regex.findIndex((item, idx) => {
+            if(idx > index && item == ')'){
+              return idx;
+            }
+          });
+          // hace referencia al valor que esta a la derecha de la paretensis de cierre
+          let star_clausure: boolean = token_array_regex[end + 1] == '*';
+          let token_inner = token_array_regex.slice(index+1,end);
+          let pattern_inner: Pattern = this.generateInnerPattern(token_inner);
+          pattern_right = (star_clausure)?
+                          new Star(
+                            pattern_inner
+                          )
+                          :
+                          new Plus(
+                            pattern_inner
+                          );
+          index = end + 2;
+        }
+        this._tokenPattern = new Sequence(this._tokenPattern, pattern_right);
+      }
+    }
+  }
+
+  generateInnerPattern(array: string[]): Pattern{
+    if(array.length == 1){
+      return new Symbol(array[0]);
+    }else{
+      // Generamos una sequence con los 2 primeros token del array
+      let patter_inner = new Sequence(new Symbol(array[0]), new Symbol(array[1]));
+      for (let index = 2; index < array.length; index++) {
+        patter_inner = new Sequence(patter_inner, new Symbol(array[index]));
+      }
+      return patter_inner;
+    }
+  }
 }

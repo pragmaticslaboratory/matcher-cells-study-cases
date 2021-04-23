@@ -30,3 +30,9 @@
 .match-token{
     color: red;
 }
+
+.more-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}

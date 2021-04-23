@@ -19,11 +19,17 @@
                 </div>
             </div>
     
-            <div class="input-group my-3">
+            <div class="input-group mt-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text">Token</span>
                 </div>
                 <input type="text" class="form-control"  placeholder="abb"  [ngModel]="_token" (ngModelChange)="_token = $event.toLowerCase()">
+            </div>
+        </div>
+
+        <div class="row" >
+            <div class="col-12 text-end">
+                <mat-checkbox color="primary" class="text-right" [(ngModel)]="_regexActivate">Regex</mat-checkbox>
             </div>
         </div>
         
@@ -44,6 +50,16 @@
         
         <div class="dropdown-divider my-3"></div>
         
+        <div *ngIf="_regexErrorValidator.active">
+            <div class="text-center">
+                <h5>Error Token!</h5>
+                <p class="my-2">
+                    <strong>{{_regexErrorValidator.text}}</strong>
+                </p>
+            </div>
+        </div>
+
+
         <div *ngIf="_match_complete">
             
             <div class="text-center">
@@ -55,6 +71,18 @@
     
             <div class="dropdown-divider my-3"></div>
             
+
+            <div class="text-center">
+                <h5>Input Trace Match</h5>
+                <div class="skill-list">
+                    <p class="skills" *ngFor="let mathView of _matchViews" [ngClass]="{'match-token':mathView.active}">
+                        {{mathView.text}}
+                     </p>
+                </div>
+            </div>
+
+            <div class="dropdown-divider my-3"></div>
+
             <div class="text-left my-2">
                 <strong>RESULT: TOTAL {{ getMatches().length }} MATCHES</strong>
             </div>
@@ -69,15 +97,6 @@
 
         </div>
 
-        <section class="section section-light">
-            <h2>Input Match</h2>
-            <div class="skill-list">
-               <p class="skills" *ngFor="let mathView of _matchViews" [ngClass]="{'match-token':mathView.active}">
-                   {{mathView.text}}
-                </p>
-            </div>
-       </section>
-        
     </div>
     <div class="col-md-4">
         <div class="text-center">
@@ -113,6 +132,10 @@
             <mat-card-title class="title-card">
                 Solution-Evolution Rules
             </mat-card-title>
+
+            <button mat-icon-button class="more-button" (click)="openAddRuleDialog()">
+                <mat-icon>add</mat-icon>
+            </button>
         
             <mat-card-content>
                 <mat-list>

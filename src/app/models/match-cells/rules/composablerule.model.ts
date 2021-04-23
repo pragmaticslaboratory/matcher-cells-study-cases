@@ -10,15 +10,14 @@ import { Pattern } from '../patterns/pattern.interface';
  */
 export class ComposableRule implements Rule {
 
-    // listado de reglas hijas
-    protected children: Rule[] = [];
-    
     /**
      * Constructor
      * Se inicializa el listado de hijos como vacio
      */
-    constructor(){
-        this.children = [];
+    constructor(
+        protected children: Rule[] = []
+    ){
+        this.children = children;
     }
     
     /**

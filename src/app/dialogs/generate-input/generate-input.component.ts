@@ -29,7 +29,7 @@ export class GenerateInputComponent implements OnInit {
     let chars = this._input.split(',');
     let finalString = '';
     for (let index = 0; index < this._length; index++) {
-      const element = chars[this.randomInt(chars.length)];
+      const element = chars[this.randomInt(chars.length-1)];
       finalString += element;
     }
     this.dialogRef.close(finalString);

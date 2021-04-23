@@ -6,12 +6,14 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
+import { AddRuleComponent } from './add-rule/add-rule.component';
 
 
 @NgModule({
-  declarations: [GenerateInputComponent],
+  declarations: [GenerateInputComponent, AddRuleComponent],
   exports: [
-    GenerateInputComponent
+    GenerateInputComponent,
+    AddRuleComponent
   ],
   imports: [
     CommonModule,

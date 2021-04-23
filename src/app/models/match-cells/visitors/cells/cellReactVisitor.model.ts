@@ -27,7 +27,6 @@ export class CellReactVisitor implements CellVisitor{
      * @returns al existir un match con el token actual, se retorna un listado de celulas vacio (que representa una celula match)
      */
     visitReactCellMatch(element: Match, token: string, index: number): Cell[] {
-        SingletonOffline.getInstance().AddMatch(token,index);
         this.showMatch(token, index);
         return [];
     }
@@ -74,6 +73,7 @@ export class CellReactVisitor implements CellVisitor{
      * @param index indice asociado al token
      */
     showMatch(token: string, index: number):void{
+        SingletonOffline.getInstance().AddMatch(token,index);
         console.log(`MATCH. Symbol: ${token} ; Token Index: ${index} `);
     }
 }
