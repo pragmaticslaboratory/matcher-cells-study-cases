@@ -23,7 +23,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Token</span>
                 </div>
-                <input type="text" class="form-control"  placeholder="abb"  [ngModel]="_token" (ngModelChange)="_token = $event.toLowerCase()">
+                <input type="text" class="form-control"  [placeholder]="_regexActivate? 'a(cd)*g' : 'abb'"  [ngModel]="_token" (ngModelChange)="_token = $event.toLowerCase()">
             </div>
         </div>
 
@@ -108,7 +108,7 @@
         <mat-card>
 
             <mat-card-title class="title-card">
-                Cell-Evolution Rules
+                Cell Evolution Rules
             </mat-card-title>
         
             <mat-card-content>
@@ -130,7 +130,7 @@
         <mat-card>
 
             <mat-card-title class="title-card">
-                Solution-Evolution Rules
+                Solution Evolution Rules
             </mat-card-title>
 
             <button mat-icon-button class="more-button" (click)="openAddRuleDialog()">
@@ -153,7 +153,7 @@
             
                     <mat-list-item 
                     style="margin-left: 1rem;"
-                    *ngFor="let item of checkbox_list">
+                    *ngFor="let item of checkbox_list; let i = index">
                         <mat-checkbox
                         color="primary"
                         [(ngModel)]="item.checked"
@@ -163,6 +163,9 @@
                         >
                             <strong>{{ item.name }}</strong>
                         </mat-checkbox>
+                        <button *ngIf="item.deletable" mat-icon-button class="delete-button" (click)="deleteRule(i)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
                     </mat-list-item>
             
                 </mat-list>

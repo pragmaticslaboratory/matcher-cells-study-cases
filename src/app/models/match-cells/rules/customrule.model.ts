@@ -27,6 +27,8 @@
       * @returns retorna el mismo listado de celulas 
       */
      apply(cells: Cell[], pattern: Pattern): Cell[]{
-         return eval.call(this, this.evaluateFunction);
+         
+        let x = eval(this.evaluateFunction);
+        return x(cells,pattern);
      }
  }

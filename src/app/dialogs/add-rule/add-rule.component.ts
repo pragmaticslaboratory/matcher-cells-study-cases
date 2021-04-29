@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MetaInformation } from 'src/app/models/match-cells/metaInformationModel';
+import { Symbol } from 'src/app/models/match-cells/patterns/symbol.model';
+import { Cell } from '../../models/match-cells/cell.model';
 
 @Component({
   selector: 'app-add-rule',
@@ -8,11 +11,11 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class AddRuleComponent implements OnInit {
   _nameRule: string = 'NewRule';
-  _functionRule: string = `apply(cells: Cell[], pattern: Pattern): Cell[]{
+  _functionRule: string = `(cells, pattern) => {
         return cells;
   }`;
 
-  _textfunc = 'this.b+this.c';
+
   constructor(
     public dialogRef: MatDialogRef<AddRuleComponent>
   ) { }
@@ -20,15 +23,22 @@ export class AddRuleComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  confirmDialog(){
-    console.log(this.evalInContext(this._textfunc, {b: 10,c: 7}));
-    
-    // this.dialogRef.close();
+  test(){
+    return 100;
   }
 
-
-  evalInContext(js, context) {
-    //# Return the results of the in-line anonymous function we .call with the passed context
-    return function() { return eval(js); }.call(context);
-}
+  confirmDialog(){
+    window.eval(`function foo() {
+      import { Symbol } from 'src/app/models/match-cells/patterns/symbol.model';
+      const y = new Symbol('x');
+      return y;
+    }`);
+    console.log(eval('foo()'));
+    // this.dialogRef.close(
+    //   {
+    //     name: this._nameRule,
+    //     js: this._functionRule
+    //   }
+    // );
+  }
 }

@@ -20,6 +20,7 @@ import { Star } from '../../models/match-cells/patterns/star.model';
 import { Plus } from '../../models/match-cells/patterns/plus.model';
 import { AddRuleComponent } from '../../dialogs/add-rule/add-rule.component';
 import { ComposableRule } from '../../models/match-cells/rules/composablerule.model';
+import { CustomRule } from '../../models/match-cells/rules/customrule.model';
 
 
 
@@ -69,12 +70,14 @@ export class OfflineComponent {
       name: "Identity",
       disabled: true,
       checked: true,
+      deletable: false,
       labelPosition: "after",
       rule: new Identity()
     }, {
       name: "Add Seed",
       disabled: false,
       checked: false,
+      deletable: false,
       labelPosition: "after",
       rule: new AddSeed()
     }
@@ -107,8 +110,21 @@ export class OfflineComponent {
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         // xd
+        const customRule: CustomRule = new CustomRule(result.name, result.js);
+        this.checkbox_list.push({
+          name: result.name,
+          disabled: false,
+          checked: false,
+          deletable: true,
+          labelPosition: "after",
+          rule: customRule
+        })
       }
     });
+  }
+
+  deleteRule(index: number){
+    this.checkbox_list.splice(index,1);
   }
 
   master_change() {
