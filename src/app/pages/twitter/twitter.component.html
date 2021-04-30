@@ -1,14 +1,61 @@
+<ngx-spinner type = "timer">
+    <p style="color: white" > Loading... </p>
+</ngx-spinner>
 <!-- HEADER -->
 <div class="row home-container">
     <div class="col-md-12 text-center mt-3">
-        <h3>CASE 1: TWITTER</h3>
+        <h2>TWITTER</h2>
     </div>
 </div>
-    <!-- CONTENT PAGE -->
-    <div class="row home-container">
-    <!-- DEBUG INFO -->
+<!-- CONTENT PAGE -->
+<div class="row home-container">
     <div class="col-md-3 text-center">
-        <p class="text-center"><strong>DEBUG INFORMATION</strong></p>
+
+        <!-- TOKEN INPUT -->
+        <div class="form-group row">
+            <label class="col-md-12 text-center col-form-label">
+                <strong>Token</strong>
+            </label>
+            <div class="input-group">
+                <input 
+                type="text" 
+                class="form-control" 
+                id="sequeNew"
+                [(ngModel)]="newSequence"
+                (keydown.enter)="addSequence()"
+                placeholder="abcd">
+                <div *ngIf="availableColors.length != 0" class="input-group-append">
+                    <span class="input-group-text" style="height: 100%;">
+                        <input type="checkbox" [(ngModel)]="_formatPattern">
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOKEN LIST -->
+        <div *ngIf="availableColors.length != 0">
+            <div class="text-center my-3">
+                <strong>Token List</strong>
+            </div>
+            <!-- class="mat-chip-list-stacked" -->
+            <mat-chip-list >
+                <mat-chip 
+                *ngFor="let chip of availableColors" 
+                selectable 
+                removable
+                (removed)="remove(chip.name)"
+                >
+                    {{(!_formatPattern)?chip.name:chip.pattern}}
+                    <mat-icon  matChipRemove>cancel</mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+        </div>
+    
+    <div class="dropdown-divider my-3"></div>
+    
+    <!-- DEBUG INFO -->
+    <p class="text-center"><strong>DEBUG INFORMATION</strong></p>
+
         <ul class="list-group">
             <li>Timer Generation
                 <span class="badge">{{timerGenerate}}</span>
@@ -17,7 +64,7 @@
                 <span class="badge">{{tweetList.length}}</span>
             </li>
             <li>Total Matchs
-                <span class="badge">0</span>
+                <span class="badge">{{getMatches()}}</span>
             </li>
         </ul>
         <button
@@ -36,59 +83,95 @@
         [username]="item.username"
         [content]="item.content"
         [hashtags]="item.hashtag"
+        [match]="item.match"
+        [total]="item.total"
         ></app-tweet>
     </div>
     <!-- CONFIGURATION OPTIONS -->
     <div class="col-md-4">
-        <!-- RULES -->
-        <div class="text-center my-3">
-            <strong>Current Rules</strong>
-        </div>
-        <ul hidden class="list-group list-rules">
-            <li class="list-group-item" *ngFor="let item of rules">{{item}}</li>
-        </ul>
-        
-        <div cdkDropListGroup>
-            <div
-                cdkDropList
-                [cdkDropListData]="rules"
-                class="example-list"
-                (cdkDropListDropped)="drop($event)">
-                <div class="example-box" *ngFor="let item of rules" cdkDrag>{{item}}</div>
-            </div>
+        <div class="text-center">
+            <strong>RULES</strong>
         </div>
 
-        <div class="dropdown-divider my-4"></div>
+        <div class="dropdown-divider my-3"></div>
 
-        <!-- SEQUENCE -->
-        <div class="form-group row">
-            <label class="col-md-12 text-center col-form-label">
-                <strong>Sequence</strong>
-            </label>
-            <div class="col-md-12">
-                <input 
-                type="text" 
-                class="form-control" 
-                id="sequeNew"
-                [(ngModel)]="newSequence"
-                (keydown.enter)="addSequence()"
-                placeholder="New Sequence...">
+        <mat-card>
+
+            <mat-card-title class="title-card">
+                Cell Evolution Rules
+            </mat-card-title>
+        
+            <mat-card-content>
+                <mat-radio-group
+                    aria-labelledby="example-radio-group-label"
+                    class="example-radio-group"
+                    color="primary"
+                    [(ngModel)]="favoriteSeason">
+                    <mat-radio-button class="example-radio-button" *ngFor="let season of seasons" [value]="season">
+                        <strong>{{season}}</strong>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-card-content>
+        </mat-card>
+
+        <div class="dropdown-divider my-3"></div>
+
+        <mat-card>
+
+            <mat-card-title class="title-card">
+                Solution Evolution Rules
+            </mat-card-title>
+        
+            <mat-card-content>
+                <mat-list>
+
+                    <mat-list-item>
+                        <mat-checkbox
+                        color="primary"
+                        [(ngModel)]="master_checked"
+                        [(indeterminate)]="master_indeterminate"
+                        (change)="master_change()"
+                        >
+                            <strong>Check/ Uncheck All</strong>
+                        </mat-checkbox>
+                    </mat-list-item>
+            
+                    <mat-list-item 
+                    style="margin-left: 1rem;"
+                    *ngFor="let item of checkbox_list; let i = index">
+                        <mat-checkbox
+                        color="primary"
+                        [(ngModel)]="item.checked"
+                        [disabled]="item.disabled"
+                        [labelPosition]="item.labelPosition"
+                        (change)="list_change()"
+                        >
+                            <strong>{{ item.name }}</strong>
+                        </mat-checkbox>
+                        <button *ngIf="item.deletable" mat-icon-button class="delete-button">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </mat-list-item>
+            
+                </mat-list>
+            </mat-card-content>
+        </mat-card>
+
+        <div class="dropdown-divider my-3"></div>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button
+                    class="col-md-8"
+                    mat-raised-button 
+                    [disabled]="availableColors.length == 0 || _match_in_process"
+                    (click)="matchProcess()" 
+                    color="primary"
+                >
+                    <mat-icon > account_tree </mat-icon>
+                    Match It!
+                </button>
             </div>
         </div>
-        
-        <div class="text-center my-3">
-            <strong>Current Sequence List</strong>
-        </div>
-        <mat-chip-list class="mat-chip-list-stacked">
-            <mat-chip 
-            *ngFor="let chip of availableColors" 
-            selectable 
-            removable
-            (removed)="remove(chip.name)"
-            >
-            {{chip.name}}
-            <mat-icon  matChipRemove>cancel</mat-icon>
-            </mat-chip>
-        </mat-chip-list>
     </div>
 </div>

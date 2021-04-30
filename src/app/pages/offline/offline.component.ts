@@ -21,18 +21,12 @@ import { Plus } from '../../models/match-cells/patterns/plus.model';
 import { AddRuleComponent } from '../../dialogs/add-rule/add-rule.component';
 import { ComposableRule } from '../../models/match-cells/rules/composablerule.model';
 import { CustomRule } from '../../models/match-cells/rules/customrule.model';
+import { ErrorMessage } from 'src/app/models/errormessage.interface';
+import { MatchView } from 'src/app/models/matchview.interface';
 
 
 
-interface MatchView{
-  text: string,
-  active: boolean
-}
 
-interface ErrorMessage{
-  text: string,
-  active: boolean
-}
 
 
 @Component({
@@ -248,13 +242,6 @@ export class OfflineComponent {
       }
     }
     this._postEvolutionRule = new ComposableRule(rule_list);
-   
-    // si addseed esta checkeado
-    // if(this.checkbox_list[1].checked){
-    //   this._postEvolutionRule = new AddSeed();
-    // }else{
-    //   this._postEvolutionRule = new Identity();
-    // }
   }
 
   resetErrorValidator(){

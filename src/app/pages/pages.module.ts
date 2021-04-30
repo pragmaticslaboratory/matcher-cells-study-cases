@@ -22,6 +22,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatDialogModule} from '@angular/material/dialog';
 import { OfflineComponent } from './offline/offline.component';
 import { TwitterComponent } from './twitter/twitter.component';
+import { NgxSpinnerModule } from "ngx-spinner";
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { TwitterComponent } from './twitter/twitter.component';
     MatRadioModule,
     MatFormFieldModule,
     MatInputModule,
-    DragDropModule
+    DragDropModule,
+    NgxSpinnerModule
   ]
 })
 export class PagesModule { }

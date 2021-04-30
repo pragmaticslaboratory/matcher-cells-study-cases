@@ -1,4 +1,4 @@
-<div class="tw-block-parent animated fadeIn fast" >
+<div class="tw-block-parent animated fadeIn fast" [ngClass]="{'tw-match' : match}">
     <div class="timeline-TweetList-tweet">
       <div class="timeline-Tweet">
         <div class="timeline-Tweet-brand">
@@ -25,6 +25,7 @@
         <ul class="timeline-Tweet-actions">
           <li class="timeline-Tweet-action"><a class="Icon Icon--heart" href="#"></a></li>
           <li class="timeline-Tweet-action"><a class="Icon Icon--share" href="#"></a></li>
+          <li class="timeline-Tweet-action" *ngIf="match">Total Match: {{total}}</li>
         </ul>
       </div>
     </div>

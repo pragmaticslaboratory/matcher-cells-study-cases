@@ -10,6 +10,8 @@ export class TweetComponent implements OnInit {
   @Input() username: string;
   @Input() content: string;
   @Input() hashtags: string[];
+  @Input() match: boolean = false;
+  @Input() total: number = 0;
   constructor() { }
 
   ngOnInit(): void {
