@@ -155,8 +155,8 @@ export class TwitterComponent implements OnInit, OnDestroy  {
 
     this.availableColors.unshift(
       {
-        name: this.newSequence,
-        pattern: this.generateNoRegexPattern(this.newSequence),
+        name: this.newSequence.toLowerCase().split(" ").join(""),
+        pattern: this.generateNoRegexPattern(this.newSequence.toLowerCase().split(" ").join("")),
         color: undefined
       }
     );
@@ -222,33 +222,26 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     
     this.generatePostEvolutionRute();
 
-    await this.internalProcess();    
-  }
+    let cellList: Cell[] = [];
 
-  internalProcess(){
-    return new Promise<void>((resolve, reject) => {
-      let cellList: Cell[] = [];
+    for (const chiptoken of this.availableColors) {
+      cellList.push(
+        new Cell(chiptoken.pattern, new MetaInformation(0)
+      ));
+    }
 
-      for (const chiptoken of this.availableColors) {
-        cellList.push(
-          new Cell(chiptoken.pattern, new MetaInformation(0)
-        ));
-      }
+    for (const tweet of this.tweetList) {
+      SingletonOffline.getInstance().Reset();
+      const solution = new Solution([...cellList],this._evolutionRule, this._postEvolutionRule);
+      solution.match(tweet.content.toLowerCase().split(" ").join(""));
+      const total_matches = SingletonOffline.getInstance().Matches().length;
+      tweet.match = total_matches != 0;
+      tweet.total = total_matches;
+    }
 
-      for (const tweet of this.tweetList) {
-        SingletonOffline.getInstance().Reset();
-        const solution = new Solution([...cellList],this._evolutionRule, this._postEvolutionRule);
-        solution.match(tweet.content.toLowerCase().split(" ").join(""));
-        const total_matches = SingletonOffline.getInstance().Matches().length;
-        tweet.match = total_matches != 0;
-        tweet.total = total_matches;
-      }
-
-      this._match_in_process = false;
-      this._match_complete = true;
-      this.spinner.hide();
-      resolve();
-    })
+    this._match_in_process = false;
+    this._match_complete = true;
+    this.spinner.hide();
   }
 
   generateEvolutionRule(){
