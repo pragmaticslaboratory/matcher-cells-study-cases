@@ -82,6 +82,7 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     active: false
   }
 
+  _oom_type_format: boolean = false;
   _evolutionRule: Evolution = null;
   _postEvolutionRule: Rule = null;
 
@@ -232,9 +233,20 @@ export class TwitterComponent implements OnInit, OnDestroy  {
 
     for (const tweet of this.tweetList) {
       SingletonOffline.getInstance().Reset();
-      const solution = new Solution([...cellList],this._evolutionRule, this._postEvolutionRule);
-      solution.match(tweet.content.toLowerCase().split(" ").join(""));
-      const total_matches = SingletonOffline.getInstance().Matches().length;
+      let total_matches: number = 0;
+      let solution: Solution;
+      if(this._oom_type_format && this.favoriteSeason === 'Only One Match'){
+        for (const cell of cellList) {
+          solution = new Solution([cell],this._evolutionRule, this._postEvolutionRule);
+          solution.match(tweet.content.toLowerCase().split(" ").join(""));
+          total_matches += SingletonOffline.getInstance().Matches().length;
+          SingletonOffline.getInstance().Reset();
+        }
+      }else{
+        solution = new Solution([...cellList],this._evolutionRule, this._postEvolutionRule);
+        solution.match(tweet.content.toLowerCase().split(" ").join(""));
+        total_matches = SingletonOffline.getInstance().Matches().length;
+      }
       tweet.match = total_matches != 0;
       tweet.total = total_matches;
     }
