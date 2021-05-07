@@ -25,7 +25,11 @@
         <ul class="timeline-Tweet-actions">
           <li class="timeline-Tweet-action"><a class="Icon Icon--heart" href="#"></a></li>
           <li class="timeline-Tweet-action"><a class="Icon Icon--share" href="#"></a></li>
-          <li class="timeline-Tweet-action" *ngIf="match">Total Match: {{total}}</li>
+          <li class="timeline-Tweet-action total-match" *ngIf="match">
+            <b>
+              Total Match: {{total}}
+            </b>
+          </li>
         </ul>
       </div>
     </div>

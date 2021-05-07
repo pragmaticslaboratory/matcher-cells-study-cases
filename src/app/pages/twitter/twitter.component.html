@@ -51,13 +51,13 @@
             </mat-chip-list>
         </div>
     
-    <div class="dropdown-divider my-3"></div>
+        <div class="dropdown-divider my-3"></div>
     
-    <!-- DEBUG INFO -->
-    <p class="text-center"><strong>DEBUG INFORMATION</strong></p>
+        <!-- DEBUG INFO -->
+        <p class="text-center"><strong>DEBUG INFORMATION</strong></p>
 
         <ul class="list-group">
-            <li>Timer Generation
+            <li>New Tweet In
                 <span class="badge">{{timerGenerate}}</span>
             </li>
             <li>Total Tweets
@@ -66,18 +66,49 @@
             <li>Total Matchs
                 <span class="badge">{{getMatches()}}</span>
             </li>
-            <li>OOM - TYPE 2
-                <input type="checkbox" [(ngModel)]="_oom_type_format">
-            </li>
         </ul>
-        <button
-        class="my-3"
-        mat-raised-button 
-        (click)="generateTweet()" 
-        color="primary">
-            <mat-icon >refresh</mat-icon>
-            Generate Tweet
-        </button>
+        
+        <div class="dropdown-divider my-3"></div>
+
+        <!-- TOKEN INPUT -->
+        <div class="form-group row">
+            <label class="col-md-12 text-center col-form-label">
+                <strong>Timer Generator</strong>
+            </label>
+            <div class="input-group">
+                <input 
+                type="number" 
+                class="form-control" 
+                id="timer"
+                min="5"
+                [(ngModel)]="newTimer"
+                placeholder="0">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button
+                class="my-2"
+                mat-raised-button
+                (click)="setTimerGenerator()"
+                [disabled]="!newTimer || newTimer < 1"
+                color="primary">
+                    <mat-icon >save</mat-icon>
+                    Set New Timer
+                </button>
+            </div>
+            <div class="col-md-12">
+                <button
+                class="my-2"
+                mat-raised-button 
+                (click)="generateTweet()" 
+                color="primary">
+                    <mat-icon >refresh</mat-icon>
+                    Generate New Tweet
+                </button>
+            </div>
+        </div>
+
     </div>
     <!-- LIST TWEET -->
     <div class="col-md-5 tweet-list">

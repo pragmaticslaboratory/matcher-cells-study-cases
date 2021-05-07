@@ -59,6 +59,7 @@ export class TwitterComponent implements OnInit, OnDestroy  {
   
   tweetList: Tweet[] = [];
 
+  newTimer: number = 100;
   timeToGenerate: number = 100;
   timerGenerate: number = this.timeToGenerate;
 
@@ -82,7 +83,6 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     active: false
   }
 
-  _oom_type_format: boolean = false;
   _evolutionRule: Evolution = null;
   _postEvolutionRule: Rule = null;
 
@@ -122,11 +122,11 @@ export class TwitterComponent implements OnInit, OnDestroy  {
 
   ngOnInit(): void {
     for(let i=0; i < 4; i++){
-      this.generateTweet();
+      this.generateTweet(false);
     }
   }
 
-  generateTweet(){
+  generateTweet(do_match: boolean = true){
     this.timerGenerate = this.timeToGenerate;
     let text = this.textExamples[this.getRandomInt(this.textExamples.length)];
     this.tweetList.unshift({
@@ -136,6 +136,16 @@ export class TwitterComponent implements OnInit, OnDestroy  {
       match: false,
       total: 0
     });
+    if(do_match && this.availableColors.length != 0){
+      this.matchProcess();
+    }
+  }
+
+  setTimerGenerator(){
+    if(this.newTimer && this.newTimer >= 1){
+      this.timeToGenerate = this.newTimer;
+      this.timerGenerate = this.timeToGenerate;
+    }
   }
 
   getRandomInt(max) {
@@ -235,7 +245,7 @@ export class TwitterComponent implements OnInit, OnDestroy  {
       SingletonOffline.getInstance().Reset();
       let total_matches: number = 0;
       let solution: Solution;
-      if(this._oom_type_format && this.favoriteSeason === 'Only One Match'){
+      if(this.favoriteSeason === 'Only One Match'){
         for (const cell of cellList) {
           solution = new Solution([cell],this._evolutionRule, this._postEvolutionRule);
           solution.match(tweet.content.toLowerCase().split(" ").join(""));
