@@ -7,6 +7,7 @@ import { Identity } from './rules/identity.model';
 import { Pattern } from './patterns/pattern.interface';
 import { OnlyOneMatch } from './evolution/onlyOneMatch.model';
 import { Evolution } from './evolution/evolution.interface';
+import { SingletonOffline } from '../singletonOffline.model';
 
 export class Solution{
     
@@ -46,6 +47,9 @@ export class Solution{
 
             // RULES POST-EVOLUTION
             this.cells = this.rules.apply(this.cells, initialPattern);
+
+            // ADD TIME MATCH TRACE (IF APPROPIATE)
+            SingletonOffline.getInstance().AddTimeMatch();
         }
     }
 

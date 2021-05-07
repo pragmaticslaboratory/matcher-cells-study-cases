@@ -10,6 +10,7 @@ import { Sequence } from '../../patterns/sequence.model';
 import { PatternVisitor } from './patternVisitor.interface';
 import { MetaInformation } from '../../metaInformationModel';
 import { Skip } from '../../match_result/skip.model';
+import { SingletonOffline } from '../../../singletonOffline.model';
 
 export class PatternSequenceVisitor implements PatternVisitor{
 
@@ -21,6 +22,7 @@ export class PatternSequenceVisitor implements PatternVisitor{
      * debido a que la evaluación actual es de tipo match (hubo coincidencia con el token)
      */
     visitEvaluationPatternMatch(element: Match, rightPattern: Pattern): MatchResult {
+        SingletonOffline.getInstance().SetTraceActiveTime();
         return new Advance(rightPattern);
     }
     
@@ -40,6 +42,7 @@ export class PatternSequenceVisitor implements PatternVisitor{
      * @returns un objeto de tipo Advance con el patron actual del elemento advance y el patron derecho restante de la celula
      */
     visitEvaluationPatternAdvance(element: Advance, rightPattern: Pattern): MatchResult {
+        SingletonOffline.getInstance().SetTraceActiveTime();
         return new Advance(new Sequence(element.pattern, rightPattern));
     }
 
@@ -52,6 +55,7 @@ export class PatternSequenceVisitor implements PatternVisitor{
      * @returns un objeto de tipo Skip con el patron actual del elemento skip y el patron derecho restante de la celula
      */
      visitEvaluationPatternSkip(element: Skip, rightPattern: Pattern, environment: MetaInformation, token: string): MatchResult {
+        SingletonOffline.getInstance().SetTraceActiveTime();
         return rightPattern.evaluation(token, environment );
     }
 

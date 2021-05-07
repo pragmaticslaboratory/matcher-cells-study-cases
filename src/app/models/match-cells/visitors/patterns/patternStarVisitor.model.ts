@@ -10,6 +10,7 @@ import { MetaInformation } from "../../metaInformationModel";
 import { Pattern } from "../../patterns/pattern.interface";
 import { PatternVisitor } from "./patternVisitor.interface";
 import { Star } from '../../patterns/star.model';
+import { SingletonOffline } from 'src/app/models/singletonOffline.model';
 
 export class PatternStarVisitor implements PatternVisitor{
 
@@ -21,6 +22,7 @@ export class PatternStarVisitor implements PatternVisitor{
      * debido a que la evaluación actual es de tipo match (hubo coincidencia con el token)
      */
     visitEvaluationPatternMatch(element: Match, pattern: Pattern): MatchResult {
+        SingletonOffline.getInstance().SetTraceActiveTime();
         return new Advance(new Star(pattern));
     }
 
@@ -30,6 +32,7 @@ export class PatternStarVisitor implements PatternVisitor{
      * @returns un objeto de tipo Skip con el patron actual del elemento skip
      */
     visitEvaluationPatternStuck(element: Stuck): MatchResult {
+        SingletonOffline.getInstance().SetTraceActiveTime();
         return new Skip();
     }
 
@@ -40,6 +43,7 @@ export class PatternStarVisitor implements PatternVisitor{
      * @returns un objeto de tipo Skip con el patron actual del elemento skip
      */
     visitEvaluationPatternAdvance(element: Advance, rightPattern: Pattern): MatchResult {
+        SingletonOffline.getInstance().SetTraceActiveTime();
         return new Skip();
     }
 
@@ -52,6 +56,7 @@ export class PatternStarVisitor implements PatternVisitor{
      * @returns un objeto de tipo Skip con el patron actual del elemento skip
      */
     visitEvaluationPatternSkip(element: Skip, rightPattern: Pattern, environment: MetaInformation, token: string): MatchResult {
+        SingletonOffline.getInstance().SetTraceActiveTime();
         return new Skip();
     }
     

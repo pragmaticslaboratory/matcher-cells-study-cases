@@ -23,6 +23,7 @@ import { ComposableRule } from '../../models/match-cells/rules/composablerule.mo
 import { CustomRule } from '../../models/match-cells/rules/customrule.model';
 import { ErrorMessage } from 'src/app/models/errormessage.interface';
 import { MatchView } from 'src/app/models/matchview.interface';
+import { TraceLife } from '../../models/match-cells/rules/tracelife.model';
 
 
 
@@ -67,17 +68,29 @@ export class OfflineComponent {
       deletable: false,
       labelPosition: "after",
       rule: new Identity()
-    }, {
+    },
+    {
       name: "Add Seed",
       disabled: false,
       checked: false,
       deletable: false,
       labelPosition: "after",
       rule: new AddSeed()
+    },
+    {
+      name: "Trace Life",
+      disabled: false,
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new TraceLife()
     }
   ];
   
   _matchViews: MatchView[] = [];
+
+  _matchTime: number = SingletonOffline.getInstance().TimeInformation().matchTime;
+  _lifeTime: number = SingletonOffline.getInstance().TimeInformation().lifeTime;
 
   constructor(public dialog: MatDialog) {}
 
@@ -154,6 +167,9 @@ export class OfflineComponent {
   }
 
   generateInitialPattern(){
+    if(!this.validateTraceTimeSolution()){
+      return;
+    }
     if(this._regexActivate){
       this.generateRegexPattern();
     }else{
@@ -255,10 +271,12 @@ export class OfflineComponent {
     this._match_complete = false;
     this.resetErrorValidator();
     SingletonOffline.getInstance().Reset();
-
     this.generateInitialPattern();
 
     if(!this._regexErrorValidator.active){
+      
+      this.setTimerSolution();
+  
       this.generateEvolutionRule();
     
       this.generatePostEvolutionRute();
@@ -274,6 +292,11 @@ export class OfflineComponent {
 
   }
 
+  setTimerSolution(){
+    SingletonOffline.getInstance().SetTimeMatch(this._matchTime);
+    SingletonOffline.getInstance().SetLifeTime(this._lifeTime);
+  }
+
   getInformationInputMatch(){
     this._matchViews = [];
     for(let index=0; index < this._input.length; index++){
@@ -286,6 +309,19 @@ export class OfflineComponent {
 
   getMatches(){
     return SingletonOffline.getInstance().Matches();
+  }
+
+  validateTraceTimeSolution(): boolean{
+    // validator trace timers
+    if(!this._matchTime || this._matchTime <= 0 || !this._lifeTime || this._lifeTime <= 0){
+      this._regexErrorValidator = {
+        text: 'Not valid trace timers configuration',
+        active: true
+      }
+      return false;
+    }
+
+    return true;
   }
 
 

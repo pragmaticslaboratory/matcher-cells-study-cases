@@ -52,7 +52,7 @@
         
         <div *ngIf="_regexErrorValidator.active">
             <div class="text-center">
-                <h5>Error Token!</h5>
+                <h5>Error Configuration!</h5>
                 <p class="my-2">
                     <strong>{{_regexErrorValidator.text}}</strong>
                 </p>
@@ -171,5 +171,41 @@
                 </mat-list>
             </mat-card-content>
         </mat-card>
+
+        <div class="dropdown-divider my-3"></div>
+
+        <mat-card class="mb-4">
+            <mat-card-title class="title-card">
+                Trace Life Config
+            </mat-card-title>
+
+            <mat-card-content>
+                <div class="row">
+                    <mat-form-field class="col-xl-6">
+                        <mat-label>Time per match</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_matchTime"
+                        min="0"
+                        type="number" >
+                        <span matSuffix>ms</span>
+                        <mat-hint>Time elapsed after the first match</mat-hint>
+                    </mat-form-field>
+                    <mat-form-field class="col-xl-6">
+                        <mat-label>Amount</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_lifeTime"
+                        min="0"
+                        type="number" >
+                        <span matSuffix>ms</span>
+                        
+                        <mat-hint>Patterns should be matched before ∆time ends</mat-hint>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+
+        </mat-card>
+
     </div>
 </div>
