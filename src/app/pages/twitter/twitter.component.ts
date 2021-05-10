@@ -118,7 +118,10 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     }
   } , 1000);
 
-  constructor(private spinner: NgxSpinnerService) { }
+  constructor(
+    private spinner: NgxSpinnerService,
+    public dialog: MatDialog
+    ) { }
 
   ngOnInit(): void {
     for(let i=0; i < 4; i++){
@@ -167,7 +170,10 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     this.availableColors.unshift(
       {
         name: this.newSequence.toLowerCase().split(" ").join(""),
-        pattern: this.generateNoRegexPattern(this.newSequence.toLowerCase().split(" ").join("")),
+        pattern: this._regexActivate ? 
+        this.generateRegexPattern(this.newSequence.toLowerCase().split(" ").join(""))
+        :
+        this.generateNoRegexPattern(this.newSequence.toLowerCase().split(" ").join("")),
         color: undefined
       }
     );
@@ -189,6 +195,200 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     return tokenPattern;
   }
 
+  findCharWithArray(char: string, array: string[]): boolean{
+    return array.findIndex((item) => {
+      return item === char;
+    }) != -1;
+  }
+
+  validateBracesTokenRegex(token: string){
+    let braces: number = 0;
+    let innerElements: number = 0;
+    for (let i = 0; i < token.length; ++i) {
+      const curCh = token[i];
+      if (curCh == '(') {
+          braces++;
+          continue;
+      } else if (curCh == ')') {
+          braces--;
+          if(braces < 0 || (braces == 0 && innerElements == 0)) return false;
+      }
+      // TIENE QUE HABER UN ELEMENTO ENTRE MEDIO DE LOS BRACES COMO POR EJEMPLO (abc) ((ac)) para evitar los () ((()))
+      if(braces > 0 && !this.findCharWithArray(curCh, ['(',')'])){
+        innerElements++;
+      }
+    }
+    if (braces != 0) {
+      return false;
+    }
+    return true;
+  }
+
+  validateTokenRegex(token: string): boolean{
+    // validar si es solo un elemento (length == 0) que no sea + * ( ) { } [ ]
+    if(token.length == 1 && this.findCharWithArray(token,['+','*','(',')'])){
+      this._regexErrorValidator = {
+        text: 'Token no valid. Remember the characters ( )* or ( )+ are reserved',
+        active: true
+      }
+      return false;
+    }
+    // validator parenthesis
+    if(!this.validateBracesTokenRegex(token)){
+      this._regexErrorValidator = {
+        text: 'Token no valid. Not valid parenthesis decorator',
+        active: true
+      }
+      return false;
+    }
+
+    return true;
+  }
+
+  generateInnerPattern(array: string[]): Pattern{
+    if(array.length == 1){
+      return new Symbol(array[0]);
+    }else{
+      // Generamos una sequence con los 2 primeros token del array
+      let patter_inner = new Sequence(new Symbol(array[0]), new Symbol(array[1]));
+      for (let index = 2; index < array.length; index++) {
+        patter_inner = new Sequence(patter_inner, new Symbol(array[index]));
+      }
+      return patter_inner;
+    }
+  }
+
+  generateRegexPattern(_token: string): Pattern{
+    // IF ERRORS
+    if(!this.validateTokenRegex(_token)){
+      return;
+    }
+    // IF TOKEN DOESN'T HAVE * or + pattern just use the other method
+    if(!this.findCharWithArray('*',[..._token]) && !this.findCharWithArray('+', [..._token])){
+      // DELETE BRANCHES AND WORK LIKE A NORMAL STRING
+      const token = _token.replace(/[-+()\s]/g, '');
+      return this.generateNoRegexPattern(token);
+    }else{
+      const MAX_LENGTH: number = _token.length;
+      let token_array_regex = [..._token];
+      let tokenPattern: Pattern = null;
+      // Ver caso especial de (...)*, siendo (abcdf)* || (acv)*
+      if(token_array_regex[0] == '(' && 
+         token_array_regex[MAX_LENGTH - 2] == ')' &&
+         this.findCharWithArray(token_array_regex[MAX_LENGTH - 1],['*','+']) &&
+         !this.findCharWithArray('*', token_array_regex.slice(1, MAX_LENGTH-2)) && 
+         !this.findCharWithArray('+', token_array_regex.slice(1, MAX_LENGTH-2)) &&
+         !this.findCharWithArray('(', token_array_regex.slice(1, MAX_LENGTH-2)) &&
+         !this.findCharWithArray(')', token_array_regex.slice(1, MAX_LENGTH-2))
+      ){
+        tokenPattern = (token_array_regex[MAX_LENGTH-1] == '*')?
+              new Star(this.generateInnerPattern(token_array_regex.slice(1,MAX_LENGTH-2)))
+              :
+              new Plus(this.generateInnerPattern(token_array_regex.slice(1,MAX_LENGTH-2)));
+        return tokenPattern;
+      }
+      // Sera siempre una secuencia de tipo
+      // Al comenzar el token puede ser de 2 formas
+      // a... ||  b... || f... comenzando por alguna letra
+      // o
+      // empezando por ( para indicar que es clausura o clausura positiva
+      let second_position: number = 0;
+      let pattern_left: Pattern = null;
+      let pattern_right: Pattern = null
+      
+      // first
+      if(token_array_regex[0] != '('){
+        pattern_left = new Symbol(token_array_regex[0]);
+        second_position = 1;
+      }else{
+        // es un clausura ( ... )*
+        // debemos encontrar el paretensis derecho o el coso de )
+        let first_end: number = token_array_regex.findIndex((item, index) => {
+          if(index > 0 && item == ')'){
+            return index;
+          }
+        });
+        // hace referencia al valor que esta a la derecha de la paretensis de cierre
+        let star_clausure_first: boolean = token_array_regex[first_end + 1] == '*';
+        let token_inner_first = token_array_regex.slice(1,first_end);
+        let pattern_inner_first: Pattern = this.generateInnerPattern(token_inner_first);
+        pattern_left = (star_clausure_first)?
+                        new Star(
+                          pattern_inner_first
+                        )
+                        :
+                        new Plus(
+                          pattern_inner_first
+                        );
+        second_position = first_end + 2;
+      }
+
+      let actual_position: number = 0;
+
+      // second
+      if(token_array_regex[second_position] != '('){
+        pattern_right = new Symbol(token_array_regex[second_position]);
+        actual_position = second_position + 1;
+      }else{
+        // es un clausura ( ... )*
+        // debemos encontrar el paretensis derecho o el coso de )
+        let second_end: number = token_array_regex.findIndex((item, index) => {
+          if(index > second_position && item == ')'){
+            return index;
+          }
+        });
+        
+        
+        // hace referencia al valor que esta a la derecha de la paretensis de cierre
+        let star_clausure_second: boolean = token_array_regex[second_end + 1] == '*';
+        let token_inner_second = token_array_regex.slice(second_position+1,second_end);
+        let pattern_inner_second: Pattern = this.generateInnerPattern(token_inner_second);
+        pattern_right = (star_clausure_second)?
+                        new Star(
+                          pattern_inner_second
+                        )
+                        :
+                        new Plus(
+                          pattern_inner_second
+                        );
+        actual_position = second_end + 2;
+      }
+      // Generamos una sequence con los 2 primeros token del array
+      tokenPattern = new Sequence(pattern_left,pattern_right);
+      // ahora solo right pattern
+      for (let index = actual_position; index < MAX_LENGTH;) {
+        // DERECHO
+        if(token_array_regex[index] != '('){
+          pattern_right = new Symbol(token_array_regex[index]);
+          index++;
+        }else{
+          // es un clausura ( ... )*
+          // debemos encontrar el paretensis derecho o el coso de )
+          let end: number = token_array_regex.findIndex((item, idx) => {
+            if(idx > index && item == ')'){
+              return idx;
+            }
+          });
+          // hace referencia al valor que esta a la derecha de la paretensis de cierre
+          let star_clausure: boolean = token_array_regex[end + 1] == '*';
+          let token_inner = token_array_regex.slice(index+1,end);
+          let pattern_inner: Pattern = this.generateInnerPattern(token_inner);
+          pattern_right = (star_clausure)?
+                          new Star(
+                            pattern_inner
+                          )
+                          :
+                          new Plus(
+                            pattern_inner
+                          );
+          index = end + 2;
+        }
+        tokenPattern = new Sequence(tokenPattern, pattern_right);
+      }
+
+      return tokenPattern;
+    }
+  }
 
   list_change(){
     let checked_count = 0;
@@ -213,6 +413,28 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     }
   }
 
+  openAddRuleDialog(): void {
+    const dialogRef = this.dialog.open(AddRuleComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        // xd
+        const customRule: CustomRule = new CustomRule(result.name, result.js);
+        this.checkbox_list.push({
+          name: result.name,
+          disabled: false,
+          checked: false,
+          deletable: true,
+          labelPosition: "after",
+          rule: customRule
+        });
+      }
+    });
+  }
   
   remove(chip: string): void {
     const index = this.availableColors.findIndex(item => item.name == chip);
@@ -228,7 +450,7 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     this._match_complete = false;
     this._match_in_process = true;
     this.resetTweetStatus();
-    
+
     this.generateEvolutionRule();
     
     this.generatePostEvolutionRute();

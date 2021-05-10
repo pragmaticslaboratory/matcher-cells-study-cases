@@ -45,3 +45,15 @@ mat-chip {
 .list-rules{
     width: 100%;
 }
+
+.more-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+
+.delete-button{
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}

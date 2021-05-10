@@ -118,14 +118,15 @@ export class OfflineComponent {
       if(result){
         // xd
         const customRule: CustomRule = new CustomRule(result.name, result.js);
-        this.checkbox_list.push({
+        let customObj = {
           name: result.name,
           disabled: false,
           checked: false,
           deletable: true,
           labelPosition: "after",
           rule: customRule
-        })
+        };
+        this.checkbox_list.splice(this.checkbox_list.length - 1, 0, customObj);
       }
     });
   }
@@ -323,7 +324,6 @@ export class OfflineComponent {
 
     return true;
   }
-
 
   generateRegexPattern(){
     // IF ERRORS

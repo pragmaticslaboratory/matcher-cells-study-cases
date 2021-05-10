@@ -32,6 +32,12 @@
             </div>
         </div>
 
+        <div class="row" >
+            <div class="col-12 text-end">
+                <mat-checkbox color="primary" class="text-right" [(ngModel)]="_regexActivate">Regex</mat-checkbox>
+            </div>
+        </div>
+
         <!-- TOKEN LIST -->
         <div *ngIf="availableColors.length != 0">
             <div class="text-center my-3">
@@ -156,6 +162,10 @@
                 Solution Evolution Rules
             </mat-card-title>
         
+            <button mat-icon-button class="more-button" (click)="openAddRuleDialog()">
+                <mat-icon>add</mat-icon>
+            </button>
+
             <mat-card-content>
                 <mat-list>
 
