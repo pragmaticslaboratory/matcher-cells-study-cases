@@ -50,12 +50,12 @@ export class OfflineComponent {
   _tokenCustomAddSeed: string = 'x';
   
   _regexActivate: boolean = false;
+  _regexActivateCustomAddSeed: boolean = false;
   _regexErrorValidator: ErrorMessage = {
     text: '',
     active: false
   }
 
-  _tokenArr: string[] = [];
   _tokenPattern: Pattern = null;
   _evolutionRule: Evolution = null;
   _postEvolutionRule: Rule = null;
@@ -176,29 +176,30 @@ export class OfflineComponent {
     }
   }
 
-  generateInitialPattern(){
+  generateInitialPattern(token: string): Pattern{
     if(!this.validateTraceTimeSolution()){
-      return;
+      return null;
     }
     if(this._regexActivate){
-      this.generateRegexPattern();
+      return this.generateRegexPattern(token);
     }else{
-      this.generateNoRegexPattern(this._token);
+      return this.generateNoRegexPattern(token);
     }
   }
   
-  generateNoRegexPattern(token: string){
-    this._tokenArr = [...token];
-
-    if(this._tokenArr.length == 1){
-      this._tokenPattern = new Symbol(this._tokenArr[0]);
+  generateNoRegexPattern(token: string): Pattern{
+    let tokenArr: string[] = [...token];
+    let tokenPattern: Pattern;
+    if(tokenArr.length == 1){
+      tokenPattern = new Symbol(tokenArr[0]);
     }else{
       // Generamos una sequence con los 2 primeros token del array
-      this._tokenPattern = new Sequence(new Symbol(this._tokenArr[0]), new Symbol(this._tokenArr[1]));
-      for (let index = 2; index < this._tokenArr.length; index++) {
-        this._tokenPattern = new Sequence(this._tokenPattern, new Symbol(this._tokenArr[index]));
+      tokenPattern = new Sequence(new Symbol(tokenArr[0]), new Symbol(tokenArr[1]));
+      for (let index = 2; index < tokenArr.length; index++) {
+        tokenPattern = new Sequence(tokenPattern, new Symbol(tokenArr[index]));
       }
     }
+    return tokenPattern;
   }
 
   findCharWithArray(char: string, array: string[]): boolean{
@@ -230,9 +231,9 @@ export class OfflineComponent {
     return true;
   }
 
-  validateTokenRegex(): boolean{
+  validateTokenRegex(token: string): boolean{
     // validar si es solo un elemento (length == 0) que no sea + * ( ) { } [ ]
-    if(this._token.length == 1 && this.findCharWithArray(this._token[0],['+','*','(',')'])){
+    if(token.length == 1 && this.findCharWithArray(token[0],['+','*','(',')'])){
       this._regexErrorValidator = {
         text: 'Token no valid. Remember the characters ( )* or ( )+ are reserved',
         active: true
@@ -281,7 +282,7 @@ export class OfflineComponent {
     this._match_complete = false;
     this.resetErrorValidator();
     SingletonOffline.getInstance().Reset();
-    this.generateInitialPattern();
+    this._tokenPattern = this.generateInitialPattern(this._token);
 
     if(!this._regexErrorValidator.active){
       
@@ -338,29 +339,34 @@ export class OfflineComponent {
     return true;
   }
 
-  generateRegexPattern(){
+  generateRegexPattern(_token: string): Pattern{
     // IF ERRORS
-    if(!this.validateTokenRegex()){
+    if(!this.validateTokenRegex(_token)){
       return;
     }
     // IF TOKEN DOESN'T HAVE * or + pattern just use the other method
-    if(!this.findCharWithArray('*',[...this._token]) && !this.findCharWithArray('+', [...this._token])){
+    if(!this.findCharWithArray('*',[..._token]) && !this.findCharWithArray('+', [..._token])){
       // DELETE BRANCHES AND WORK LIKE A NORMAL STRING
-      const token = this._token.replace(/[-+()\s]/g, '');
-      this.generateNoRegexPattern(token);
+      const token = _token.replace(/[-+()\s]/g, '');
+      return this.generateNoRegexPattern(token);
     }else{
-      const MAX_LENGTH: number = this._token.length;
-      let token_array_regex = [...this._token];
-
+      const MAX_LENGTH: number = _token.length;
+      let token_array_regex = [..._token];
+      let tokenPattern: Pattern = null;
       // Ver caso especial de (...)*, siendo (abcdf)* || (acv)*
       if(token_array_regex[0] == '(' && 
-         this.findCharWithArray(token_array_regex[MAX_LENGTH - 1],['*','+'])
+         token_array_regex[MAX_LENGTH - 2] == ')' &&
+         this.findCharWithArray(token_array_regex[MAX_LENGTH - 1],['*','+']) &&
+         !this.findCharWithArray('*', token_array_regex.slice(1, MAX_LENGTH-2)) && 
+         !this.findCharWithArray('+', token_array_regex.slice(1, MAX_LENGTH-2)) &&
+         !this.findCharWithArray('(', token_array_regex.slice(1, MAX_LENGTH-2)) &&
+         !this.findCharWithArray(')', token_array_regex.slice(1, MAX_LENGTH-2))
       ){
-        this._tokenPattern = (token_array_regex[MAX_LENGTH-1] == '*')?
+        tokenPattern = (token_array_regex[MAX_LENGTH-1] == '*')?
               new Star(this.generateInnerPattern(token_array_regex.slice(1,MAX_LENGTH-2)))
               :
               new Plus(this.generateInnerPattern(token_array_regex.slice(1,MAX_LENGTH-2)));
-        return;
+        return tokenPattern;
       }
       // Sera siempre una secuencia de tipo
       // Al comenzar el token puede ser de 2 formas
@@ -368,7 +374,6 @@ export class OfflineComponent {
       // o
       // empezando por ( para indicar que es clausura o clausura positiva
       let second_position: number = 0;
-      this._tokenPattern = null;
       let pattern_left: Pattern = null;
       let pattern_right: Pattern = null
       
@@ -430,7 +435,7 @@ export class OfflineComponent {
         actual_position = second_end + 2;
       }
       // Generamos una sequence con los 2 primeros token del array
-      this._tokenPattern = new Sequence(pattern_left,pattern_right);
+      tokenPattern = new Sequence(pattern_left,pattern_right);
       // ahora solo right pattern
       for (let index = actual_position; index < MAX_LENGTH;) {
         // DERECHO
@@ -459,8 +464,10 @@ export class OfflineComponent {
                           );
           index = end + 2;
         }
-        this._tokenPattern = new Sequence(this._tokenPattern, pattern_right);
+        tokenPattern = new Sequence(tokenPattern, pattern_right);
       }
+
+      return tokenPattern;
     }
   }
 
@@ -484,7 +491,13 @@ export class OfflineComponent {
 
   setPatternCustomAddSeedSelected(){
     let customAddSeed = this.checkbox_list.find((item) => item.name == 'Custom Add Seed');
-    customAddSeed.rule = new AddSeedCustom(this._tokenCustomAddSeed)
+    let newPattern: Pattern = this._regexActivateCustomAddSeed
+                              ? 
+                              this.generateRegexPattern(this._tokenCustomAddSeed.toLowerCase().split(" ").join(""))
+                              :
+                              this.generateNoRegexPattern(this._tokenCustomAddSeed.toLowerCase().split(" ").join(""));
+    customAddSeed.rule = new AddSeedCustom(this._tokenCustomAddSeed, newPattern);
+    console.log(customAddSeed.rule);
   }
 
   customAddSeedSelected(){

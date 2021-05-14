@@ -18,14 +18,7 @@ export class AddSeedCustom implements Rule{
         public pattern: Pattern = null
     ){
         this.token = token;
-        this.pattern = new Symbol(token);
-    }
-
-    /**
-     * Metodo para establecer el nuevo patron asociado a la clase
-     */
-     setPattern(pattern: Pattern):void {
-        this.pattern = pattern;
+        this.pattern = pattern ? pattern :  new Symbol(token);
     }
 
      /**
