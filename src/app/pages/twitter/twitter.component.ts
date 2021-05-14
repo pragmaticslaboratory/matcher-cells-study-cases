@@ -59,8 +59,8 @@ export class TwitterComponent implements OnInit, OnDestroy  {
   
   tweetList: Tweet[] = [];
 
-  newTimer: number = 100;
-  timeToGenerate: number = 100;
+  newTimer: number = 10;
+  timeToGenerate: number = 10;
   timerGenerate: number = this.timeToGenerate;
 
   // OLD STUFF

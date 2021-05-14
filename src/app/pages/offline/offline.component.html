@@ -38,7 +38,7 @@
                 <button
                     class="col-md-8"
                     mat-raised-button 
-                    [disabled]="_token == '' || _input == ''"
+                    [disabled]="disableMatchButton()"
                     (click)="matchProcess()" 
                     color="primary"
                 >
@@ -172,9 +172,9 @@
             </mat-card-content>
         </mat-card>
 
-        <div class="dropdown-divider my-3"></div>
+        <div class="dropdown-divider my-3" *ngIf="traceLifeConfigSelected()"></div>
 
-        <mat-card class="mb-4">
+        <mat-card class="mb-4" *ngIf="traceLifeConfigSelected()">
             <mat-card-title class="title-card">
                 Trace Life Config
             </mat-card-title>
@@ -202,6 +202,40 @@
                         
                         <mat-hint>Patterns should be matched before ∆time ends</mat-hint>
                     </mat-form-field>
+                </div>
+            </mat-card-content>
+
+        </mat-card>
+
+        <div class="dropdown-divider my-3" *ngIf="customAddSeedSelected()"></div>
+
+        <mat-card class="mb-4" *ngIf="customAddSeedSelected()">
+            <mat-card-title class="title-card">
+                Custom Add Seed
+            </mat-card-title>
+
+            <mat-card-content>
+                <div class="row">
+                    <mat-form-field class="col-xl-12">
+                        <mat-label>Custom Seed</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_tokenCustomAddSeed"
+                        type="text" >
+                        <mat-hint>Custom token to apply add seed rule</mat-hint>
+                    </mat-form-field>
+                    <div class="col-xl-12 text-center mt-2">
+                        <button
+                            class="col-md-8"
+                            mat-raised-button 
+                            [disabled]="disableBtnCustomAddSeed()"
+                            (click)="setPatternCustomAddSeedSelected()" 
+                            color="primary"
+                        >
+                            <mat-icon > verified </mat-icon>
+                            Set new pattern
+                        </button>
+                    </div>
                 </div>
             </mat-card-content>
 

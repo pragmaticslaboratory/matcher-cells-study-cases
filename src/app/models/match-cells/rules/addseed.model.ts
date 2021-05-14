@@ -4,8 +4,9 @@
 import { Cell } from '../cell.model';
 import { ComposableRule } from './composablerule.model';
 import { Pattern } from '../patterns/pattern.interface';
+import { Rule } from './rule.interface';
 
-export class AddSeed extends ComposableRule{
+export class AddSeed implements Rule{
 
     /**
      * Función para aplicar una regla a un listado de celulas y generar la post evolución de la solución

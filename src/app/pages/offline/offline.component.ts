@@ -24,6 +24,7 @@ import { CustomRule } from '../../models/match-cells/rules/customrule.model';
 import { ErrorMessage } from 'src/app/models/errormessage.interface';
 import { MatchView } from 'src/app/models/matchview.interface';
 import { TraceLife } from '../../models/match-cells/rules/tracelife.model';
+import { AddSeedCustom } from 'src/app/models/match-cells/rules/addseedcustom.model';
 
 
 
@@ -46,7 +47,7 @@ export class OfflineComponent {
   _match_complete: boolean = false;
   _input: string = '';
   _token: string = '';
-  
+  _tokenCustomAddSeed: string = 'x';
   
   _regexActivate: boolean = false;
   _regexErrorValidator: ErrorMessage = {
@@ -76,6 +77,14 @@ export class OfflineComponent {
       deletable: false,
       labelPosition: "after",
       rule: new AddSeed()
+    },
+    {
+      name: "Custom Add Seed",
+      disabled: false,
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new AddSeedCustom(this._tokenCustomAddSeed)
     },
     {
       name: "Trace Life",
@@ -312,9 +321,13 @@ export class OfflineComponent {
     return SingletonOffline.getInstance().Matches();
   }
 
+  validateTraceLifeConfig(){
+    return !this._matchTime || this._matchTime <= 0 || !this._lifeTime || this._lifeTime <= 0;
+  }
+
   validateTraceTimeSolution(): boolean{
     // validator trace timers
-    if(!this._matchTime || this._matchTime <= 0 || !this._lifeTime || this._lifeTime <= 0){
+    if(this.validateTraceLifeConfig()){
       this._regexErrorValidator = {
         text: 'Not valid trace timers configuration',
         active: true
@@ -462,5 +475,30 @@ export class OfflineComponent {
       }
       return patter_inner;
     }
+  }
+
+  disableBtnCustomAddSeed():boolean{
+    return !this._tokenCustomAddSeed || 
+            this._tokenCustomAddSeed === '';
+  }
+
+  setPatternCustomAddSeedSelected(){
+    let customAddSeed = this.checkbox_list.find((item) => item.name == 'Custom Add Seed');
+    customAddSeed.rule = new AddSeedCustom(this._tokenCustomAddSeed)
+  }
+
+  customAddSeedSelected(){
+    const customAddSeed = this.checkbox_list.find((item) => item.name == 'Custom Add Seed');
+    return customAddSeed.checked;
+  }
+
+  traceLifeConfigSelected(){
+    const traceLifeCheck = this.checkbox_list.find((item) => item.name == 'Trace Life');
+    return traceLifeCheck.checked;
+  }
+
+  disableMatchButton(){
+    return this._token == '' || this._input == '' ||
+          (this.traceLifeConfigSelected() && this.validateTraceLifeConfig());
   }
 }

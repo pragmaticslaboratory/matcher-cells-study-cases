@@ -18,6 +18,10 @@ import { SingletonOffline } from '../../singletonOffline.model';
          return this.killByTraceLife() ? [] : cells;
      }
 
+     /**
+      * Función que verifica si el contador de trazado de vida entre los match de la solución
+      * @returns verifica si la solución ya no es valida para los parametros establecidos para se eliminada
+      */
      killByTraceLife(): boolean{
         return SingletonOffline.getInstance().TimeInformation().activeTrace &&
                (SingletonOffline.getInstance().TimeInformation().lifeTime - SingletonOffline.getInstance().TimeInformation().currentTime) <= 0;
