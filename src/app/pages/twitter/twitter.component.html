@@ -129,6 +129,24 @@
     </div>
     <!-- CONFIGURATION OPTIONS -->
     <div class="col-md-4">
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button
+                    class="col-md-8"
+                    mat-raised-button 
+                    [disabled]="availableColors.length == 0 || _match_in_process"
+                    (click)="matchProcess()" 
+                    color="primary"
+                >
+                    <mat-icon > account_tree </mat-icon>
+                    Match It!
+                </button>
+            </div>
+        </div>
+
+        <div class="dropdown-divider my-3"></div>
+
         <div class="text-center">
             <strong>RULES</strong>
         </div>
@@ -192,7 +210,7 @@
                         >
                             <strong>{{ item.name }}</strong>
                         </mat-checkbox>
-                        <button *ngIf="item.deletable" mat-icon-button class="delete-button">
+                        <button *ngIf="item.deletable" mat-icon-button class="delete-button" (click)="deleteRule(i)">
                             <mat-icon>delete</mat-icon>
                         </button>
                     </mat-list-item>
@@ -201,21 +219,77 @@
             </mat-card-content>
         </mat-card>
 
-        <div class="dropdown-divider my-3"></div>
+        <div class="dropdown-divider my-3" *ngIf="traceLifeConfigSelected()"></div>
 
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <button
-                    class="col-md-8"
-                    mat-raised-button 
-                    [disabled]="availableColors.length == 0 || _match_in_process"
-                    (click)="matchProcess()" 
-                    color="primary"
-                >
-                    <mat-icon > account_tree </mat-icon>
-                    Match It!
-                </button>
-            </div>
-        </div>
+        <mat-card class="mb-4" *ngIf="traceLifeConfigSelected()">
+            <mat-card-title class="title-card">
+                Trace Life Config
+            </mat-card-title>
+
+            <mat-card-content>
+                <div class="row">
+                    <mat-form-field class="col-xl-6">
+                        <mat-label>Time per match</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_matchTime"
+                        min="0"
+                        type="number" >
+                        <span matSuffix>ms</span>
+                        <mat-hint>Time elapsed after the first match</mat-hint>
+                    </mat-form-field>
+                    <mat-form-field class="col-xl-6">
+                        <mat-label>Life Time</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_lifeTime"
+                        min="0"
+                        type="number" >
+                        <span matSuffix>ms</span>
+                        
+                        <mat-hint>Patterns should be matched before ∆time ends</mat-hint>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+
+        </mat-card>
+
+        <div class="dropdown-divider my-3" *ngIf="customAddSeedSelected()"></div>
+
+        <mat-card class="mb-4" *ngIf="customAddSeedSelected()">
+            <mat-card-title class="title-card">
+                Custom Add Seed
+            </mat-card-title>
+
+            <mat-card-content>
+                <div class="row">
+                    <mat-form-field class="col-xl-12">
+                        <mat-label>Custom Seed</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_tokenCustomAddSeed"
+                        type="text" >
+                        <mat-hint>Custom token to apply add seed rule</mat-hint>
+                    </mat-form-field>
+                    <div class="col-xl-12 text-end">
+                        <mat-checkbox color="primary" class="text-right" [(ngModel)]="_regexActivateCustomAddSeed">Regex</mat-checkbox>
+                    </div>
+                    <div class="col-xl-12 text-center mt-2">
+                        <button
+                            class="col-md-8"
+                            mat-raised-button 
+                            [disabled]="disableBtnCustomAddSeed()"
+                            (click)="setPatternCustomAddSeedSelected()" 
+                            color="primary"
+                        >
+                            <mat-icon > verified </mat-icon>
+                            Set new pattern
+                        </button>
+                    </div>
+                </div>
+            </mat-card-content>
+
+        </mat-card>
+
     </div>
 </div>

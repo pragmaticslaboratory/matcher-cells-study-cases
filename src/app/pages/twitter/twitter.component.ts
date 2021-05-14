@@ -27,6 +27,8 @@ import { Tweet } from 'src/app/models/tweet.interface';
 import { ErrorMessage } from 'src/app/models/errormessage.interface';
 import { MatchView } from 'src/app/models/matchview.interface';
 import { ChipToken } from '../../models/match-cells/chiptoken.interface';
+import { AddSeedCustom } from 'src/app/models/match-cells/rules/addseedcustom.model';
+import { TraceLife } from 'src/app/models/match-cells/rules/tracelife.model';
 
 @Component({
   selector: 'app-twitter',
@@ -75,9 +77,15 @@ export class TwitterComponent implements OnInit, OnDestroy  {
   _match_in_process: boolean = false;
   _input: string = '';
   _token: string = '';
-  
+  _tokenCustomAddSeed: string = 'x';
+
+  _matchTime: number = SingletonOffline.getInstance().TimeInformation().matchTime;
+  _lifeTime: number = SingletonOffline.getInstance().TimeInformation().lifeTime;
+
   _formatPattern: boolean = false;
   _regexActivate: boolean = false;
+  _regexActivateCustomAddSeed: boolean = false;
+
   _regexErrorValidator: ErrorMessage = {
     text: '',
     active: false
@@ -102,6 +110,22 @@ export class TwitterComponent implements OnInit, OnDestroy  {
       deletable: false,
       labelPosition: "after",
       rule: new AddSeed()
+    },
+    {
+      name: "Custom Add Seed",
+      disabled: false,
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new AddSeedCustom(this._tokenCustomAddSeed)
+    },
+    {
+      name: "Trace Life",
+      disabled: false,
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new TraceLife()
     }
   ];
   
@@ -154,6 +178,11 @@ export class TwitterComponent implements OnInit, OnDestroy  {
   getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
   }
+
+  deleteRule(index: number){
+    this.checkbox_list.splice(index,1);
+  }
+
 
   master_change() {
     for (let value of Object.values(this.checkbox_list)) {
@@ -520,4 +549,28 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     clearInterval(this.generateTweetInterval);
   }
 
+  customAddSeedSelected(){
+    const customAddSeed = this.checkbox_list.find((item) => item.name == 'Custom Add Seed');
+    return customAddSeed.checked;
+  }
+
+  disableBtnCustomAddSeed():boolean{
+    return !this._tokenCustomAddSeed || 
+            this._tokenCustomAddSeed === '';
+  }
+
+  setPatternCustomAddSeedSelected(){
+    let customAddSeed = this.checkbox_list.find((item) => item.name == 'Custom Add Seed');
+    let newPattern: Pattern = this._regexActivateCustomAddSeed
+                              ? 
+                              this.generateRegexPattern(this._tokenCustomAddSeed.toLowerCase().split(" ").join(""))
+                              :
+                              this.generateNoRegexPattern(this._tokenCustomAddSeed.toLowerCase().split(" ").join(""));
+    customAddSeed.rule = new AddSeedCustom(this._tokenCustomAddSeed, newPattern);
+  }
+
+  traceLifeConfigSelected(){
+    const traceLifeCheck = this.checkbox_list.find((item) => item.name == 'Trace Life');
+    return traceLifeCheck.checked;
+  }
 }

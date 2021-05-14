@@ -135,7 +135,8 @@ export class OfflineComponent {
           labelPosition: "after",
           rule: customRule
         };
-        this.checkbox_list.splice(this.checkbox_list.length - 1, 0, customObj);
+        this.checkbox_list.push(customObj);
+        // this.checkbox_list.splice(this.checkbox_list.length - 1, 0, customObj);
       }
     });
   }
