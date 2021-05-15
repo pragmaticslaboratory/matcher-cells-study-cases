@@ -23,6 +23,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { OfflineComponent } from './offline/offline.component';
 import { TwitterComponent } from './twitter/twitter.component';
 import { NgxSpinnerModule } from "ngx-spinner";
+import { TraceExecutionComponent } from './trace-execution/trace-execution.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { NgxSpinnerModule } from "ngx-spinner";
     PagesComponent,
     HomeComponent,
     OfflineComponent,
-    TwitterComponent
+    TwitterComponent,
+    TraceExecutionComponent
   ],
   exports: [
     PagesComponent,

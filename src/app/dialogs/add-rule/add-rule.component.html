@@ -1,11 +1,19 @@
 <div mat-dialog-title class="text-center">Create New Rule</div>
 <div mat-dialog-content class="my-3">
-    <form>
-        <div class="form-group">
-            <label for="exampleFormControlInput1">Rule Name</label>
-            <input type="text" name="inputRule" class="form-control" id="inputRule" [(ngModel)]="_nameRule"  placeholder="NewRule">
-        </div>
-        <div class="form-group mt-3">
+    <form class="row">
+        <mat-form-field class="col-md-8" appearance="outline">
+            <mat-label>Rule Name</mat-label>
+            <input matInput type="text" name="inputRule" id="inputRule" [(ngModel)]="_nameRule"  placeholder="NewRule">
+        </mat-form-field>
+        <mat-form-field class="col-md-4" appearance="outline">
+            <mat-label>Rule Example</mat-label>
+            <mat-select (selectionChange)="onChange($event.value)" >
+              <mat-option *ngFor="let i of rules_examples" [value]="i.example">
+                {{i.name}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>     
+        <div class="form-group mt-3 col-xl-12">
             <textarea class="form-control" name="textAreaFunctionRule" [(ngModel)]="_functionRule" id="textAreaFunctionRule" rows="3"></textarea>
         </div>
     </form>

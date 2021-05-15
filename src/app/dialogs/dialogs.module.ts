@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import { AddRuleComponent } from './add-rule/add-rule.component';
+import {MatSelectModule} from '@angular/material/select';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { AddRuleComponent } from './add-rule/add-rule.component';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatButtonModule
   ]
 })
