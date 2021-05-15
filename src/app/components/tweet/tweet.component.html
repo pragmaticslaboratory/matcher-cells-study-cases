@@ -8,13 +8,13 @@
             <div class="TweetAuthor">
               <a class="TweetAuthor-link" href="#channel"></a>
                 <span class="TweetAuthor-avatar"> 
-                    <div class="Avatar"> </div>
+                    <div class="Avatar" [ngStyle]="{'background-image': 'url(' + image + ')'}"> </div>
                 </span>
                 <span class="TweetAuthor-name">
                     {{ username}}
                 </span>
                 <span class="Icon Icon--verified"></span>
-                <span class="TweetAuthor-screenName">@{{username}} </span>
+                <span class="TweetAuthor-screenName">{{handle}} </span>
             </div>
         </div>
         <div class="timeline-Tweet-text">

@@ -4,6 +4,8 @@ export interface Tweet{
     content: string,
     hashtag: string[],
     match: boolean,
-    total: number
+    total: number,
+    handle: string,
+    image: string
 }
   

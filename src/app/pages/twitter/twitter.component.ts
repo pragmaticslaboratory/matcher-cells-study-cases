@@ -17,7 +17,6 @@ import { NgxSpinnerService } from "ngx-spinner";
 
 
 import {MatDialog} from '@angular/material/dialog';
-import { GenerateInputComponent } from '../../dialogs/generate-input/generate-input.component';
 import { Star } from '../../models/match-cells/patterns/star.model';
 import { Plus } from '../../models/match-cells/patterns/plus.model';
 import { AddRuleComponent } from '../../dialogs/add-rule/add-rule.component';
@@ -29,6 +28,8 @@ import { MatchView } from 'src/app/models/matchview.interface';
 import { ChipToken } from '../../models/match-cells/chiptoken.interface';
 import { AddSeedCustom } from 'src/app/models/match-cells/rules/addseedcustom.model';
 import { TraceLife } from 'src/app/models/match-cells/rules/tracelife.model';
+
+import tweetJson from '../../../assets/data/tweets.json';
 
 @Component({
   selector: 'app-twitter',
@@ -47,17 +48,7 @@ export class TwitterComponent implements OnInit, OnDestroy  {
 
   newSequence: string = '';
 
-  textExamples: string[] = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
-    'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam ',
-    'Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules.',
-    'Muy lejos, más allá de las montañas de palabras, alejados de los países de las vocales y las consonantes, viven los textos simulados. Viven aislados en casas de letras, en la costa de la semántica, un gran océano de lenguas. ',
-    'Y, viéndole don Quijote de aquella manera, con muestras de tanta tristeza, le dijo: Sábete, Sancho, que no es un hombre más que otro si no hace más que otro. Todas estas borrascas que nos suceden son señales de que presto ha de serenar',
-    'Reina en mi espíritu una alegría admirable, muy parecida a las dulces alboradas de la primavera, de que gozo aquí con delicia. Estoy solo, y me felicito de vivir en este país, el más a propósito para almas como la mía, soy tan dichoso',
-    'Una mañana, tras un sueño intranquilo, Gregorio Samsa se despertó convertido en un monstruoso insecto. Estaba echado de espaldas sobre un duro caparazón y, al alzar la cabeza, vio su vientre convexo y oscuro, surcado',
-    'Quiere la boca exhausta vid, kiwi, piña y fugaz jamón. Fabio me exige, sin tapujos, que añada cerveza al whisky. Jovencillo emponzoñado de whisky, ¡qué figurota exhibes! La cigüeña tocaba cada vez mejor el saxofón y el búho pedía kiwi y queso.'
-  ];
-  hashtagExample: string[] = ['#UCN','#PRAGMATIC','#ULS','#DBZ'];
+  tweetsData: any[] = tweetJson.data;
   
   tweetList: Tweet[] = [];
 
@@ -155,13 +146,15 @@ export class TwitterComponent implements OnInit, OnDestroy  {
 
   generateTweet(do_match: boolean = true){
     this.timerGenerate = this.timeToGenerate;
-    let text = this.textExamples[this.getRandomInt(this.textExamples.length)];
+    let tweet = this.tweetsData[this.getRandomInt(this.tweetsData.length)];
     this.tweetList.unshift({
-      username: 'PLeger',
-      content: text.substring(0, text.length),
-      hashtag: [this.hashtagExample[this.getRandomInt(this.hashtagExample.length)]],
+      username: tweet.username,
+      content: tweet.content,
+      handle: tweet.handle,
+      hashtag: [],
       match: false,
-      total: 0
+      total: 0,
+      image: tweet.image
     });
     if(do_match && this.availableColors.length != 0){
       this.matchProcess();
