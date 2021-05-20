@@ -37,6 +37,38 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     animation-name: fadeIn;
 }
 
+/* LIST */
+
+.list-group {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-radius: .5em;
+}
+
+.list-group li {
+    border-top: 1px solid #ccc;
+    padding: .5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group li:first-child {
+    border-top: 0;
+}
+
+.list-group .badge {
+    background-color: rebeccapurple;
+    color: #fff;
+    font-weight: bold;
+    font-size: 80%;
+    border-radius: 10em;
+    min-width: 1.5em;
+    padding: .25em;
+    text-align: center
+}
 
 /* CONFIG MATCH INTERFACE UI */
 

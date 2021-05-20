@@ -8,52 +8,113 @@
     </div>
 </div>
 <!-- CONTENT PAGE -->
+<div class="row home-container">
+  <div class="col-md-3">
+    <mat-card >
+      <mat-card-title class="title-card">
+          Configuration
+      </mat-card-title>
 
+      <mat-card-content>
+          <div class="row">
+              <mat-form-field class="col-xl-12">
+                  <mat-label>Time for Good performance</mat-label>
+                  <input 
+                  [(ngModel)]="configUser.good_performance"
+                  matInput
+                  min="0"
+                  type="number" >
+                  <span matSuffix>sec</span>
+              </mat-form-field>
+              <mat-form-field class="col-xl-12">
+                  <mat-label>Time for need help</mat-label>
+                  <input 
+                  [(ngModel)]="configUser.need_help"
+                  matInput
+                  min="0"
+                  type="number" >
+                  <span matSuffix>sec</span>
+                  <mat-hint></mat-hint>
+              </mat-form-field>
+              <mat-form-field class="col-xl-12">
+                <mat-label>Time for medium performance</mat-label>
+                <input 
+                [(ngModel)]="configUser.medium_performance"
+                matInput
+                min="0"
+                type="number" >
+                <span matSuffix>sec</span>
+              </mat-form-field>
+              <div class="col-xl-12 text-center mt-2">
+                <button
+                    class="col-md-8"
+                    mat-raised-button 
+                    color="primary"
+                    (click)="setAndResetInformation()"
+                >
+                  <mat-icon > settings </mat-icon>
+                  Set and Reset
+                </button>
+              </div>
+          </div>
+      </mat-card-content>
+      
+    </mat-card>
 
-<div class="game-container">
-    <h1>Online evaluation</h1>
-    <div class="center-div">
-        <div class="timer-box">
-          <p>Time(s): {{timerQuestions | number:'3.0' }}</p>
-        </div>
+    <div *ngIf="log.length > 0" class="dropdown-divider my-3"></div>
 
-        <div class="inner-box">
-            <div class="box1">
-                <input [(ngModel)]="valuesQuestion[0]" type="number" disabled id="v1">
+    <ul *ngIf="log.length > 0" class="list-group">
+      <li *ngFor="let item of log">{{ item }}</li>
+    </ul>
+
+  </div>
+  <div class="col-md-9">
+    <div class="game-container">
+        <h1>Online evaluation</h1>
+        <div class="center-div">
+            <div class="timer-box">
+              <p>Time(s): {{timerQuestions | number:'3.0' }}</p>
             </div>
-            <div class="box1">
-                <p>+</p>
+    
+            <div class="inner-box">
+                <div class="box1">
+                    <input [(ngModel)]="valuesQuestion[0]" type="number" disabled id="v1">
+                </div>
+                <div class="box1">
+                    <p>+</p>
+                </div>
+                <div class="box1">
+                    <input [(ngModel)]="valuesQuestion[1]" type="number" disabled id="v2">
+                </div>
             </div>
-            <div class="box1">
-                <input [(ngModel)]="valuesQuestion[1]" type="number" disabled id="v2">
+            <div class="middle-box">
+                <input type="number" id="answer" [(ngModel)]="answer">
             </div>
-        </div>
-        <div class="middle-box">
-            <input type="number" id="answer" [(ngModel)]="answer">
-        </div>
-
-        <small class="info">
-          {{textValidation}}
-        </small>
-
-        <div class="bnts-box">
-          <button
-          mat-raised-button 
-          color="primary"
-          [disabled]="!validAnswerBtn()"
-          (click)="verify()"
-          >
-            <mat-icon > fact_check </mat-icon>
-            VERIFY
-          </button>
-          <button
-          mat-raised-button 
-          color="primary"
-          (click)="skip()"
-          >
-            <mat-icon > skip_next </mat-icon>
-            SKIP
-          </button>
+    
+            <small [hidden]="!textValidation" class="info" [ngClass]="textValidation == 'GOOD' ? 'good' : 'bad'">
+              {{textValidation}}
+            </small>
+    
+            <div class="bnts-box">
+              <button
+              mat-raised-button 
+              color="primary"
+              [disabled]="!validAnswerBtn()"
+              (click)="verify()"
+              >
+                <mat-icon > fact_check </mat-icon>
+                VERIFY
+              </button>
+              <button
+              mat-raised-button 
+              color="primary"
+              (click)="skip()"
+              >
+                <mat-icon > skip_next </mat-icon>
+                SKIP
+              </button>
+            </div>
         </div>
     </div>
+  </div>
 </div>
