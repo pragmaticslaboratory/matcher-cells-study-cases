@@ -3,13 +3,57 @@
 </ngx-spinner>
 <!-- HEADER -->
 <div class="row home-container">
-    <div class="col-md-12 text-center mt-3">
+    <div class="col-md-12 text-center my-3">
         <h2>TRACE EXECUTION - CASE 2</h2>
     </div>
 </div>
 <!-- CONTENT PAGE -->
-<div class="row home-container">
-    <div class="col-md-12 text-center">
-        <img src="https://steamuserimages-a.akamaihd.net/ugc/818937339219845350/1774A289109BA488C2C9346BE10750C37E09336F/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true" alt="">
+
+
+<div class="game-container">
+    <h1>Online evaluation</h1>
+    <div class="center-div">
+        <div class="timer-box">
+          <p>Time(s): {{timerQuestions | number:'3.0' }}</p>
+        </div>
+
+        <div class="inner-box">
+            <div class="box1">
+                <input [(ngModel)]="valuesQuestion[0]" type="number" disabled id="v1">
+            </div>
+            <div class="box1">
+                <p>+</p>
+            </div>
+            <div class="box1">
+                <input [(ngModel)]="valuesQuestion[1]" type="number" disabled id="v2">
+            </div>
+        </div>
+        <div class="middle-box">
+            <input type="number" id="answer" [(ngModel)]="answer">
+        </div>
+
+        <small class="info">
+          {{textValidation}}
+        </small>
+
+        <div class="bnts-box">
+          <button
+          mat-raised-button 
+          color="primary"
+          [disabled]="!validAnswerBtn()"
+          (click)="verify()"
+          >
+            <mat-icon > fact_check </mat-icon>
+            VERIFY
+          </button>
+          <button
+          mat-raised-button 
+          color="primary"
+          (click)="skip()"
+          >
+            <mat-icon > skip_next </mat-icon>
+            SKIP
+          </button>
+        </div>
     </div>
-</div>  
+</div>
