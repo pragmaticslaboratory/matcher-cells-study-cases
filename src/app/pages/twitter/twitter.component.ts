@@ -564,9 +564,17 @@ export class TwitterComponent implements OnInit, OnDestroy  {
   }
 
   openInformationDialog(): void {
+    const parrafos: string[] = [
+      "Twitter (Case Study 1). Matcher Cells allows developers to identify a set of tweets that are streaming on the fly. This case study is a Web application that uses Matcher Cells that identify tweets utilizing the composition of different rules of cell and solution evolutions. A particular composition represents a specific matching semantics that can be modified in the execution time with a pattern.",
+      "For this case study, we collect 1,000 tweets that are related to the video game subject. A tweet from this collection appears in an interval of n seconds. The user of this application can specify a pattern (using regular expression or not) and a particular semantics to match tweets, which turns red."
+    ];
+    const list: string [] = [];
     const dialogRef = this.dialog.open(InfoPageComponent, {
-      width: '500px',
-      data: 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.'
+      width: '600px',
+      data: {
+        parrafos,
+        list
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -1,6 +1,9 @@
 <div mat-dialog-title class="text-center">Information</div>
 <div mat-dialog-content class="my-3">
-    {{data}}
+    <p *ngFor="let par of data.parrafos">{{par}}</p>
+    <ul>
+      <li *ngFor="let i of data.list" >{{i}}</li>
+    </ul>
 </div>
 <div mat-dialog-actions class="btns-actions">
   <button mat-flat-button color="warn" [matDialogClose] >Close</button>

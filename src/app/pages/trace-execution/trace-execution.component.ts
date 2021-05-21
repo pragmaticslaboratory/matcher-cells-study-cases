@@ -291,13 +291,25 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
   }
 
   openInformationDialog(): void {
+    const parrafos: string[] = [
+      "Context-Aware System (Case Study 2). These systems can dynamically modify their behavior according to a user's needs. In this case study, we modify a Web application that assesses the math skills of primary school students to adapt to the learning rhythm of a particular student. We use Matcher Cells to identify the student's learning rhythm.",
+      "For this case study, we define four adaptations for the Web application:"
+    ];
+    const list: string [] = [
+      "If n1 correct answers in a period of time < x1, the application goes up to the next level, which increases the number of digits in the addition.",
+      "If n2 wrong answers in a period of time < x2, the application goes down to the previous level, which decreases the number of digits in the addition.",
+      "If n3 uses of 'Skip', the application goes down to the first level (one digit in the addition).",
+      "If n4 correct answers in a period of time > x3, the application keeps the number of digits in the addition."
+    ];
     const dialogRef = this.dialog.open(InfoPageComponent, {
-      width: '500px',
-      data: 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.'
+      width: '600px',
+      data: {
+        parrafos,
+        list
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      
     });
   }
 
