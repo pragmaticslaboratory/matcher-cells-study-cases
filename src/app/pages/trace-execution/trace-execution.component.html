@@ -1,15 +1,19 @@
 <ngx-spinner type = "timer">
     <p style="color: white" > Loading... </p>
 </ngx-spinner>
+
 <!-- HEADER -->
 <div class="row home-container">
     <div class="col-md-12 text-center my-3">
-        <h2>TRACE EXECUTION - CASE 2</h2>
+        <h2>CONTEXT-AWARE SYSTEM - CASE STUDY 2</h2>
     </div>
+    <button (click)="openInformationDialog()" mat-mini-fab color="primary" class="my-3" style="position: absolute; right: 15px">
+      <mat-icon>help</mat-icon>
+    </button>
 </div>
 <!-- CONTENT PAGE -->
 <div class="row home-container">
-  <div class="col-md-3">
+  <div class="col-lg-5">
     <mat-card >
       <mat-card-title class="title-card">
           Configuration
@@ -17,8 +21,17 @@
 
       <mat-card-content>
           <div class="row">
-              <mat-form-field class="col-xl-12">
-                  <mat-label>Time for Good performance</mat-label>
+              <mat-form-field class="col-xl-6">
+                  <mat-label>Number for UP LEVEL</mat-label>
+                  <input 
+                  [(ngModel)]="configUser.number_good_performance"
+                  matInput
+                  min="0"
+                  type="number" >
+                  <span matSuffix></span>
+              </mat-form-field>
+              <mat-form-field class="col-xl-6">
+                  <mat-label>Time for UP LEVEL</mat-label>
                   <input 
                   [(ngModel)]="configUser.good_performance"
                   matInput
@@ -26,8 +39,17 @@
                   type="number" >
                   <span matSuffix>sec</span>
               </mat-form-field>
-              <mat-form-field class="col-xl-12">
-                  <mat-label>Time for need help</mat-label>
+              <mat-form-field class="col-xl-6">
+                <mat-label>Number for DOWN LEVEL</mat-label>
+                <input 
+                [(ngModel)]="configUser.number_need_help"
+                matInput
+                min="0"
+                type="number" >
+                <span matSuffix></span>
+              </mat-form-field>
+              <mat-form-field class="col-xl-6">
+                  <mat-label>Time for DOWN LEVEL</mat-label>
                   <input 
                   [(ngModel)]="configUser.need_help"
                   matInput
@@ -37,7 +59,25 @@
                   <mat-hint></mat-hint>
               </mat-form-field>
               <mat-form-field class="col-xl-12">
-                <mat-label>Time for medium performance</mat-label>
+                <mat-label>Number for SKIP</mat-label>
+                <input 
+                [(ngModel)]="configUser.number_skip"
+                matInput
+                min="0"
+                type="number" >
+                <span matSuffix></span>
+              </mat-form-field>
+              <mat-form-field class="col-xl-6">
+                <mat-label>Number for KEEP LEVEL</mat-label>
+                <input 
+                [(ngModel)]="configUser.number_medium_performance"
+                matInput
+                min="0"
+                type="number" >
+                <span matSuffix></span>
+              </mat-form-field>
+              <mat-form-field class="col-xl-6">
+                <mat-label>Time for KEEP LEVEL</mat-label>
                 <input 
                 [(ngModel)]="configUser.medium_performance"
                 matInput
@@ -61,17 +101,28 @@
       
     </mat-card>
 
-    <div *ngIf="log.length > 0" class="dropdown-divider my-3"></div>
+    <div *ngIf="logs.length > 0" class="dropdown-divider my-3"></div>
 
-    <ul *ngIf="log.length > 0" class="list-group">
-      <li *ngFor="let item of log">{{ item }}</li>
-    </ul>
+    <mat-list [style.overflow]="'auto'" [style.height.px]="'250'">
+      <div mat-subheader>LOG</div>
+      <mat-list-item *ngFor="let log of logs">
+        <mat-icon mat-list-icon [style.color]="log.css">{{log.image}}</mat-icon>
+        <div mat-line>{{log.title}}</div>
+        <div mat-line [style.color]="log.css"> <strong>{{log.subtitle}} </strong></div>
+        <div #badge>{{log.timer}} sec</div>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </mat-list>
+
 
   </div>
-  <div class="col-md-9">
+  <div class="col-lg-7">
     <div class="game-container">
         <h1>Online evaluation</h1>
         <div class="center-div">
+            <div class="timer-box">
+              <p>Level: {{ currentLevel }}</p>
+            </div>
             <div class="timer-box">
               <p>Time(s): {{timerQuestions | number:'3.0' }}</p>
             </div>
@@ -88,7 +139,7 @@
                 </div>
             </div>
             <div class="middle-box">
-                <input type="number" id="answer" [(ngModel)]="answer">
+                <input type="number" id="answer" [(ngModel)]="answer" (keyup.enter)="verify()">
             </div>
     
             <small [hidden]="!textValidation" class="info" [ngClass]="textValidation == 'GOOD' ? 'good' : 'bad'">

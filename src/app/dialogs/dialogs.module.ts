@@ -8,13 +8,15 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import { AddRuleComponent } from './add-rule/add-rule.component';
 import {MatSelectModule} from '@angular/material/select';
+import { InfoPageComponent } from './info-page/info-page.component';
 
 
 @NgModule({
-  declarations: [GenerateInputComponent, AddRuleComponent],
+  declarations: [GenerateInputComponent, AddRuleComponent, InfoPageComponent],
   exports: [
     GenerateInputComponent,
-    AddRuleComponent
+    AddRuleComponent,
+    InfoPageComponent
   ],
   imports: [
     CommonModule,

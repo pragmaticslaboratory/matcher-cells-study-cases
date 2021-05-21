@@ -6,16 +6,23 @@ import { MetaInformation } from 'src/app/models/match-cells/metaInformationModel
 import { Symbol } from 'src/app/models/match-cells/patterns/symbol.model';
 import { SingletonOffline } from 'src/app/models/singletonOffline.model';
 import { Solution } from 'src/app/models/match-cells/solution.model';
+import { InfoPageComponent } from '../../dialogs/info-page/info-page.component';
+import { MatDialog } from '@angular/material/dialog';
 
 const MATCH_GOOD: string = 'a';
 const MATCH_BAD: string = 'b';
 const MATCH_SKIP: string = 'c';
 const MATCH_MEDIUM: string = 'd';
 
-const GOOD_INFO: string = 'GOOD PERFORMANCE';
-const BAD_INFO: string = 'NEED HELP';
+const GOOD_INFO: string = 'STUDENT HAS GOOD PERFORMANCE';
+const BAD_INFO: string = 'STUDENT NEEDS HELP';
 const SKIP_INFO: string = 'STUDENT DOES NOT ANSWER EVERY QUESTION';
-const MEDIUM_INFO: string = 'MEDIUM PERFORMANCE';
+const MEDIUM_INFO: string = 'STUDENT HAS MEDIUM PERFORMANCE';
+
+const GOOD_INFO_SUB: string = 'UP LEVEL';
+const BAD_INFO_SUB: string = 'DOWN LEVEL';
+const SKIP_INFO_SUB: string = 'FIRST LEVEL';
+const MEDIUM_INFO_SUB: string = 'KEEP LEVEL';
 
 @Component({
   selector: 'app-trace-execution',
@@ -25,6 +32,8 @@ const MEDIUM_INFO: string = 'MEDIUM PERFORMANCE';
 export class TraceExecutionComponent implements OnInit, OnDestroy {
 
   timerQuestions: number = 0;
+
+  currentLevel: number = 1;
 
   configTimer: any = {
     number_good_performance: 3,
@@ -47,7 +56,8 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
   mathCounter: any = {
     good: 0,
     bad: 0,
-    skip: 0
+    skip: 0,
+    medium: 0
   }
 
   matchListTimer: any = {
@@ -71,7 +81,7 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
 
   inputEvaluation: string = '';
 
-  log: string[] = [];
+  logs: string[] = [];
 
   cellList: any[] = [];
   
@@ -82,7 +92,7 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
     this.timerQuestions++;
   } , 1000);
 
-  constructor() {
+  constructor(public dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -95,25 +105,33 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
     this.configUser = {...this.configTimer}
   }
 
-  generateCellEvaluation(symbol: string, content: string): any{
+  generateCellEvaluation(symbol: string, title: string, subtitle: string, image:string, css: string): any{
     return {
       cell: new Cell(new Symbol(symbol), new MetaInformation(0)),
-      result: content
+      result: {
+        title,
+        image,
+        subtitle,
+        css
+      }
     }
   }
 
   setCellsEvaluation(){
     this.cellList = [
-      this.generateCellEvaluation(MATCH_GOOD, GOOD_INFO),
-      this.generateCellEvaluation(MATCH_BAD, BAD_INFO),
-      this.generateCellEvaluation(MATCH_SKIP, SKIP_INFO),
-      this.generateCellEvaluation(MATCH_MEDIUM, MEDIUM_INFO),
+      this.generateCellEvaluation(MATCH_GOOD, GOOD_INFO, GOOD_INFO_SUB, 'verified', '#00695C'),
+      this.generateCellEvaluation(MATCH_BAD, BAD_INFO, BAD_INFO_SUB, 'error_outline', '#B03A2E'),
+      this.generateCellEvaluation(MATCH_SKIP, SKIP_INFO, SKIP_INFO_SUB, 'mood_bad', '#2E86C1'),
+      this.generateCellEvaluation(MATCH_MEDIUM, MEDIUM_INFO, MEDIUM_INFO_SUB, 'published_with_changes', '#16A085'),
     ];
   }
 
   generateNewQuestion(){
     this.answer = null;
-    this.valuesQuestion = [ this.getRandomInt(10), this.getRandomInt(10) ];
+    let min = Math.pow(10, (this.currentLevel - 1));
+    let max = Math.pow(10, this.currentLevel);
+    console.log(this.currentLevel, min, max);
+    this.valuesQuestion = [ this.randomInteger(min, max), this.randomInteger(min, max) ];
   }
 
   isCorrectAnswer(){
@@ -121,6 +139,9 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
   }
 
   verify(){
+    if(!this.validAnswerBtn()){
+      return
+    }
     if(this.isCorrectAnswer()){
       this.success();
     }else{
@@ -132,6 +153,7 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
 
   success(){
     this.mathCounter.good +=1;
+    this.mathCounter.medium +=1;
     
     let deltaTime = this.timerQuestions - this.timerLast.good;
     this.matchListTimer.good.unshift({
@@ -164,7 +186,6 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
   }
 
   processCaseStudio(){
-    this.log = [];
     this.generateInputTraceEvaluation();
     let total_matches: number = 0;
     SingletonOffline.getInstance().Reset();
@@ -173,7 +194,7 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
       solution.match(this.inputEvaluation);
       total_matches = SingletonOffline.getInstance().Matches().length;
       if(total_matches > 0){
-        this.log.push(cell.result);
+        this.logs.unshift({...cell.result, timer: this.timerQuestions});
       }
       SingletonOffline.getInstance().Reset();
     }
@@ -183,45 +204,64 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
     // Tres aciertos en un tiempo <x, log "good performance". Va al siguiente nivel  de la aplicación "suma con un digito más"
     let goodList = this.matchListTimer.good.slice(0, this.configTimer.number_good_performance);
     let totalTimeList = goodList.reduce((accumulator, currentValue) => accumulator + currentValue.deltaTime, 0);
-    if(goodList.length ===  this.configTimer.number_good_performance && totalTimeList < this.configTimer.good_performance){
+    if(goodList.length ===  this.configTimer.number_good_performance && 
+      this.mathCounter.good >=  this.configTimer.number_good_performance && 
+      totalTimeList < this.configTimer.good_performance
+    ){
+      this.currentLevel += 1;
+      this.mathCounter.good = 0;
       this.inputEvaluation += MATCH_GOOD;
     }
 
     // Tres errores en un tiempo <y<x, log "need help". Baja al siguiente nivel  de la aplicación "suma con un digito menos"
     let badList = this.matchListTimer.bad.slice(0, this.configTimer.number_need_help);
     totalTimeList = badList.reduce((accumulator, currentValue) => accumulator + currentValue.deltaTime, 0);
-    if(badList.length ===  this.configTimer.number_need_help && totalTimeList < this.configTimer.need_help){
+    if(badList.length ===  this.configTimer.number_need_help &&
+      this.mathCounter.bad >=  this.configTimer.number_need_help && 
+      totalTimeList < this.configTimer.need_help
+    ){
+      this.currentLevel--;
+      if(this.currentLevel <= 0){
+        this.currentLevel = 1;
+      }
+      this.mathCounter.bad = 0;
       this.inputEvaluation += MATCH_BAD;
     }
 
     // Dos "Skip", log "student does not answer every question"
     if(this.configTimer.number_skip <= this.mathCounter.skip){
+      this.currentLevel = 1;
+      this.mathCounter.skip = 0;
       this.inputEvaluation += MATCH_SKIP;
     }
 
     // Cuatro aciertos en un tiempo >z, log "medium performance".  
     goodList = this.matchListTimer.good.slice(0, this.configTimer.number_medium_performance);
     totalTimeList = goodList.reduce((accumulator, currentValue) => accumulator + currentValue.deltaTime, 0);
-    if( goodList.length ===  this.configTimer.number_medium_performance && totalTimeList < this.configTimer.medium_performance){
+    if( goodList.length ===  this.configTimer.number_medium_performance &&
+      this.mathCounter.medium >=  this.configTimer.number_medium_performance && 
+      totalTimeList < this.configTimer.medium_performance){
+      this.mathCounter.medium = 0;
       this.inputEvaluation += MATCH_MEDIUM;
     }
   }
 
   evaluationTraceByTime(){
-    
-  }
-
-  generateInputTraceEvaluation(type: boolean = true){
-    this.inputEvaluation = '';
-
-    if(type){
-      this.evaluationTraceByDeltaTime();
-    }else{
-      this.evaluationTraceByTime();
+    // Tres aciertos en un tiempo <x, log "good performance". Va al siguiente nivel  de la aplicación "suma con un digito más"
+    let goodList = this.matchListTimer.good.slice(0, this.configTimer.number_good_performance);
+    let totalTimeList = goodList.reduce((accumulator, currentValue) => accumulator + currentValue.deltaTime, 0);
+    if(goodList.length ===  this.configTimer.number_good_performance && totalTimeList < this.configTimer.good_performance){
+      this.inputEvaluation += MATCH_GOOD;
     }
   }
 
+  generateInputTraceEvaluation(){
+    this.inputEvaluation = '';
+    this.evaluationTraceByDeltaTime();
+  }
+
   setAndResetInformation(){
+    this.currentLevel = 1;
     this.timerQuestions = 0;
     this.timerLast = {
       good: 0,
@@ -230,13 +270,15 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
     this.mathCounter = {
       good: 0,
       bad: 0,
-      skip: 0
+      skip: 0,
+      medium: 0
     };
     this.matchListTimer = {
       good: [],
       bad: []
     };
-    this.log = [];
+    this.configTimer = {...this.configUser}
+    this.logs = [];
     this.generateNewQuestion();
   }
 
@@ -244,8 +286,19 @@ export class TraceExecutionComponent implements OnInit, OnDestroy {
     return this.answer !== null || this.answer?.toString().length == 0;
   }
 
-  getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
+  randomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+  openInformationDialog(): void {
+    const dialogRef = this.dialog.open(InfoPageComponent, {
+      width: '500px',
+      data: 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      
+    });
   }
 
   ngOnDestroy() {

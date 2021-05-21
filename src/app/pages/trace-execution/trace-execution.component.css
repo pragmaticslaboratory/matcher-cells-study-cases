@@ -44,7 +44,8 @@
     border-radius: 5px;
     font-size: 50px;
     height: 125px;
-    width: 125px;
+    min-width: 125px;
+    max-width: 200px;
     border: 1px solid rgb(169, 169, 169);
     margin: 1%;
     text-align: center;
