@@ -162,17 +162,28 @@
             <mat-card-title class="title-card">
                 Cell Evolution Rules
             </mat-card-title>
-        
+            <button mat-icon-button class="more-button" (click)="openAddEvolutionDialog()">
+                <mat-icon>add</mat-icon>
+            </button>
             <mat-card-content>
-                <mat-radio-group
-                    aria-labelledby="example-radio-group-label"
-                    class="example-radio-group"
-                    color="primary"
-                    [(ngModel)]="favoriteSeason">
-                    <mat-radio-button class="example-radio-button" *ngFor="let season of seasons" [value]="season">
-                        <strong>{{season}}</strong>
-                    </mat-radio-button>
-                </mat-radio-group>
+                
+                <mat-list>
+                    <mat-list-item 
+                    style="margin-left: 1rem;"
+                    *ngFor="let item of evolution_list; let i = index">
+                        <mat-checkbox
+                        color="primary"
+                        [(ngModel)]="item.checked"
+                        [labelPosition]="item.labelPosition"
+                        >
+                            <strong>{{ item.name }}</strong>
+                        </mat-checkbox>
+                        <button *ngIf="item.deletable" mat-icon-button class="delete-button" (click)="deleteEvolution(i)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </mat-list-item>
+                </mat-list>
+                
             </mat-card-content>
         </mat-card>
 

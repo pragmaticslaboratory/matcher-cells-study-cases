@@ -1,0 +1,25 @@
+<div mat-dialog-title class="text-center">Create New Evolution Rule</div>
+<div mat-dialog-content class="my-3">
+    <form class="row">
+        <mat-form-field class="col-md-8" appearance="outline">
+            <mat-label>Evolution Name</mat-label>
+            <input matInput type="text" name="inputRule" id="inputRule" [(ngModel)]="_nameRule"  placeholder="EvolutionNew">
+            <mat-hint>Use it at your own risk</mat-hint>  
+        </mat-form-field>
+        <mat-form-field class="col-md-4" appearance="outline">
+            <mat-label>Evolution Example</mat-label>
+            <mat-select (selectionChange)="onChange($event.value)" >
+              <mat-option *ngFor="let i of rules_examples" [value]="i.example">
+                {{i.name}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>     
+        <div class="form-group mt-3 col-xl-12">
+            <textarea class="form-control" name="textAreaFunctionRule" [(ngModel)]="_functionRule" id="textAreaFunctionRule" rows="3"></textarea>
+        </div>
+    </form>
+</div>
+<div mat-dialog-actions class="btns-actions">
+  <button mat-flat-button color="warn" [matDialogClose] >Cancel</button>
+  <button mat-flat-button color="primary" (click)="confirmDialog()">Create</button>
+</div>

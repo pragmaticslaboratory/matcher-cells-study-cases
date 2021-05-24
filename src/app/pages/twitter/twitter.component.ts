@@ -31,6 +31,9 @@ import { TraceLife } from 'src/app/models/match-cells/rules/tracelife.model';
 
 import tweetJson from '../../../assets/data/tweets.json';
 import { InfoPageComponent } from 'src/app/dialogs/info-page/info-page.component';
+import { CustomEvolution } from 'src/app/models/match-cells/evolution/customevolution.model';
+import { AddEvolutionComponent } from 'src/app/dialogs/add-evolution/add-evolution.component';
+import { ComposableEvolution } from 'src/app/models/match-cells/evolution/composableevolution.model';
 
 @Component({
   selector: 'app-twitter',
@@ -59,8 +62,22 @@ export class TwitterComponent implements OnInit, OnDestroy  {
 
   // OLD STUFF
 
-  favoriteSeason: string = 'Only One Match';
-  seasons: string[] = ['Only One Match', 'Multiple Match'];
+  evolution_list: any[] = [
+    {
+      name: "Only One Match",
+      checked: true,
+      deletable: false,
+      labelPosition: "after",
+      rule: new OnlyOneMatch()
+    },
+    {
+      name: "Multiple Match",
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new MultipleMatch()
+    }
+  ]
 
   master_checked: boolean = false;
   master_indeterminate: boolean = true;
@@ -490,17 +507,22 @@ export class TwitterComponent implements OnInit, OnDestroy  {
       SingletonOffline.getInstance().Reset();
       let total_matches: number = 0;
       let solution: Solution;
-      if(this.favoriteSeason === 'Only One Match'){
-        for (const cell of cellList) {
-          solution = new Solution([cell],this._evolutionRule, this._postEvolutionRule);
-          solution.match(tweet.content.toLowerCase().split(" ").join(""));
-          total_matches += SingletonOffline.getInstance().Matches().length;
-          SingletonOffline.getInstance().Reset();
+      for (const item of this.evolution_list) {
+        if(item.checked){
+          if(item.rule instanceof OnlyOneMatch){
+            for (const cell of cellList) {
+              solution = new Solution([cell],item.rule, this._postEvolutionRule);
+              solution.match(tweet.content.toLowerCase().split(" ").join(""));
+              total_matches += SingletonOffline.getInstance().Matches().length;
+              SingletonOffline.getInstance().Reset();
+            }
+          }else{
+            solution = new Solution([...cellList],item.rule, this._postEvolutionRule);
+            solution.match(tweet.content.toLowerCase().split(" ").join(""));
+            total_matches += SingletonOffline.getInstance().Matches().length;
+            SingletonOffline.getInstance().Reset();
+          }
         }
-      }else{
-        solution = new Solution([...cellList],this._evolutionRule, this._postEvolutionRule);
-        solution.match(tweet.content.toLowerCase().split(" ").join(""));
-        total_matches = SingletonOffline.getInstance().Matches().length;
       }
       tweet.match = total_matches != 0;
       tweet.total = total_matches;
@@ -512,10 +534,18 @@ export class TwitterComponent implements OnInit, OnDestroy  {
   }
 
   generateEvolutionRule(){
-    if(this.favoriteSeason === 'Only One Match'){
-      this._evolutionRule = new OnlyOneMatch();
-    }else{
-      this._evolutionRule = new MultipleMatch();
+    let evolution_list: Evolution[] = [];
+    for (const item of this.evolution_list) {
+      if(item.checked){
+        evolution_list.push(item.rule);
+      }
+    }
+    this._evolutionRule = new ComposableEvolution(evolution_list);
+    if(evolution_list.length === 0){
+      this._regexErrorValidator = {
+        text: 'Select at least one cell evolution rule',
+        active: true
+      }
     }
   }
 
@@ -561,6 +591,33 @@ export class TwitterComponent implements OnInit, OnDestroy  {
                               :
                               this.generateNoRegexPattern(this._tokenCustomAddSeed.toLowerCase().split(" ").join(""));
     customAddSeed.rule = new AddSeedCustom(this._tokenCustomAddSeed, newPattern);
+  }
+
+  openAddEvolutionDialog(): void {
+    const dialogRef = this.dialog.open(AddEvolutionComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        // xd
+        const customRule: CustomEvolution = new CustomEvolution(result.name, result.js);
+        let customObj = {
+          name: result.name,
+          checked: false,
+          deletable: true,
+          labelPosition: "after",
+          rule: customRule
+        };
+        this.evolution_list.push(customObj);
+      }
+    });
+  }
+
+  deleteEvolution(index: number){
+    this.evolution_list.splice(index,1);
   }
 
   openInformationDialog(): void {

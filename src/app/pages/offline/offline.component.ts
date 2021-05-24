@@ -25,6 +25,9 @@ import { ErrorMessage } from 'src/app/models/errormessage.interface';
 import { MatchView } from 'src/app/models/matchview.interface';
 import { TraceLife } from '../../models/match-cells/rules/tracelife.model';
 import { AddSeedCustom } from 'src/app/models/match-cells/rules/addseedcustom.model';
+import { ComposableEvolution } from '../../models/match-cells/evolution/composableevolution.model';
+import { AddEvolutionComponent } from '../../dialogs/add-evolution/add-evolution.component';
+import { CustomEvolution } from '../../models/match-cells/evolution/customevolution.model';
 
 
 
@@ -38,8 +41,22 @@ import { AddSeedCustom } from 'src/app/models/match-cells/rules/addseedcustom.mo
 })
 export class OfflineComponent {
 
-  favoriteSeason: string = 'Only One Match';
-  seasons: string[] = ['Only One Match', 'Multiple Match'];
+  evolution_list: any[] = [
+    {
+      name: "Only One Match",
+      checked: true,
+      deletable: false,
+      labelPosition: "after",
+      rule: new OnlyOneMatch()
+    },
+    {
+      name: "Multiple Match",
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new MultipleMatch()
+    }
+  ]
 
   master_checked: boolean = false;
   master_indeterminate: boolean = true;
@@ -136,13 +153,39 @@ export class OfflineComponent {
           rule: customRule
         };
         this.checkbox_list.push(customObj);
-        // this.checkbox_list.splice(this.checkbox_list.length - 1, 0, customObj);
+      }
+    });
+  }
+
+  openAddEvolutionDialog(): void {
+    const dialogRef = this.dialog.open(AddEvolutionComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        // xd
+        const customRule: CustomEvolution = new CustomEvolution(result.name, result.js);
+        let customObj = {
+          name: result.name,
+          checked: false,
+          deletable: true,
+          labelPosition: "after",
+          rule: customRule
+        };
+        this.evolution_list.push(customObj);
       }
     });
   }
 
   deleteRule(index: number){
     this.checkbox_list.splice(index,1);
+  }
+
+  deleteEvolution(index: number){
+    this.evolution_list.splice(index,1);
   }
 
   master_change() {
@@ -255,10 +298,18 @@ export class OfflineComponent {
 
 
   generateEvolutionRule(){
-    if(this.favoriteSeason === 'Only One Match'){
-      this._evolutionRule = new OnlyOneMatch();
-    }else{
-      this._evolutionRule = new MultipleMatch();
+    let evolution_list: Evolution[] = [];
+    for (const item of this.evolution_list) {
+      if(item.checked){
+        evolution_list.push(item.rule);
+      }
+    }
+    this._evolutionRule = new ComposableEvolution(evolution_list);
+    if(evolution_list.length === 0){
+      this._regexErrorValidator = {
+        text: 'Select at least one cell evolution rule',
+        active: true
+      }
     }
   }
 
@@ -285,14 +336,14 @@ export class OfflineComponent {
     SingletonOffline.getInstance().Reset();
     this._tokenPattern = this.generateInitialPattern(this._token);
 
+    this.generateEvolutionRule();
+    
+    this.generatePostEvolutionRute();
+
     if(!this._regexErrorValidator.active){
       
       this.setTimerSolution();
   
-      this.generateEvolutionRule();
-    
-      this.generatePostEvolutionRute();
-
       const solution = new Solution([new Cell(this._tokenPattern, new MetaInformation(0))],this._evolutionRule, this._postEvolutionRule);
 
       solution.match(this._input);
