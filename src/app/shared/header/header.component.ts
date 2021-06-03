@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { filter, map } from 'rxjs/operators';
 export class HeaderComponent implements OnInit, OnDestroy {
 
 
+  public innerWidth: any;
   public titulo: string;
   public tituloSubs$: Subscription;
 
@@ -25,6 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.onResize(0);
   }
 
   navigateRoute(path: string){
@@ -48,5 +50,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         return event.snapshot.data
       })
     );
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
   }
 }

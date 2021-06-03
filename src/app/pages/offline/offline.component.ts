@@ -28,6 +28,8 @@ import { AddSeedCustom } from 'src/app/models/match-cells/rules/addseedcustom.mo
 import { ComposableEvolution } from '../../models/match-cells/evolution/composableevolution.model';
 import { AddEvolutionComponent } from '../../dialogs/add-evolution/add-evolution.component';
 import { CustomEvolution } from '../../models/match-cells/evolution/customevolution.model';
+import { InfoPageComponent } from 'src/app/dialogs/info-page/info-page.component';
+import { AlwaysSeed } from '../../models/match-cells/rules/alwaysseed.model';
 
 
 
@@ -40,6 +42,8 @@ import { CustomEvolution } from '../../models/match-cells/evolution/customevolut
   styleUrls: ['./offline.component.css']
 })
 export class OfflineComponent {
+
+  fileToUpload: File = null;
 
   evolution_list: any[] = [
     {
@@ -94,6 +98,14 @@ export class OfflineComponent {
       deletable: false,
       labelPosition: "after",
       rule: new AddSeed()
+    },
+    {
+      name: "Always Seed",
+      disabled: false,
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new AlwaysSeed()
     },
     {
       name: "Custom Add Seed",
@@ -565,5 +577,41 @@ export class OfflineComponent {
   disableMatchButton(){
     return this._token == '' || this._input == '' ||
           (this.traceLifeConfigSelected() && this.validateTraceLifeConfig());
+  }
+
+  handleFileInput(files: FileList) {
+    this.fileToUpload = files.item(0);
+    this.readFile(this.fileToUpload);
+  }
+
+  readFile(file: File) {
+    var reader = new FileReader();
+    reader.onload = () => {
+        this._input = reader.result.toString().toLowerCase();
+    };
+    reader.readAsText(file);
+  }
+
+  showOptions(event){
+    if(event.checked){
+      this.openInformationDialog();
+    }
+  }
+
+  openInformationDialog(): void {
+    const parrafos: string[] = [
+      "TO DO INFO"
+    ];
+    const list: string [] = [];
+    const dialogRef = this.dialog.open(InfoPageComponent, {
+      width: '600px',
+      data: {
+        parrafos,
+        list
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+    });
   }
 }

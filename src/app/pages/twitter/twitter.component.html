@@ -26,7 +26,7 @@
                 id="sequeNew"
                 [(ngModel)]="newSequence"
                 (keydown.enter)="addSequence()"
-                placeholder="abcd">
+                [placeholder]="_regexActivate? 'a(cd)*g' : 'abb'" >
                 <div *ngIf="availableColors.length != 0" class="input-group-append">
                     <span class="input-group-text" style="height: 100%;">
                         <input type="checkbox" [(ngModel)]="_formatPattern">
@@ -37,7 +37,11 @@
 
         <div class="row" >
             <div class="col-12 text-end">
-                <mat-checkbox color="primary" class="text-right" [(ngModel)]="_regexActivate">Regex</mat-checkbox>
+                <mat-checkbox 
+                color="primary"
+                 class="text-right" 
+                (change)="showOptions($event)" 
+                [(ngModel)]="_regexActivate">Regex</mat-checkbox>
             </div>
         </div>
 
@@ -162,6 +166,9 @@
             <mat-card-title class="title-card">
                 Cell Evolution Rules
             </mat-card-title>
+            <button mat-icon-button class="more-info" (click)="openInformationDialog()">
+                <mat-icon>help</mat-icon>
+            </button>
             <button mat-icon-button class="more-button" (click)="openAddEvolutionDialog()">
                 <mat-icon>add</mat-icon>
             </button>
@@ -194,7 +201,9 @@
             <mat-card-title class="title-card">
                 Solution Evolution Rules
             </mat-card-title>
-        
+            <button mat-icon-button class="more-info" (click)="openInformationDialog()">
+                <mat-icon>help</mat-icon>
+            </button>
             <button mat-icon-button class="more-button" (click)="openAddRuleDialog()">
                 <mat-icon>add</mat-icon>
             </button>

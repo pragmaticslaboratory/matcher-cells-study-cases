@@ -34,6 +34,7 @@ import { InfoPageComponent } from 'src/app/dialogs/info-page/info-page.component
 import { CustomEvolution } from 'src/app/models/match-cells/evolution/customevolution.model';
 import { AddEvolutionComponent } from 'src/app/dialogs/add-evolution/add-evolution.component';
 import { ComposableEvolution } from 'src/app/models/match-cells/evolution/composableevolution.model';
+import { AlwaysSeed } from '../../models/match-cells/rules/alwaysseed.model';
 
 @Component({
   selector: 'app-twitter',
@@ -119,6 +120,14 @@ export class TwitterComponent implements OnInit, OnDestroy  {
       deletable: false,
       labelPosition: "after",
       rule: new AddSeed()
+    },
+    {
+      name: "Always Seed",
+      disabled: false,
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new AlwaysSeed()
     },
     {
       name: "Custom Add Seed",
@@ -642,5 +651,11 @@ export class TwitterComponent implements OnInit, OnDestroy  {
   traceLifeConfigSelected(){
     const traceLifeCheck = this.checkbox_list.find((item) => item.name == 'Trace Life');
     return traceLifeCheck.checked;
+  }
+
+  showOptions(event){
+    if(event.checked){
+      this.openInformationDialog();
+    }
   }
 }

@@ -5,6 +5,13 @@
     transform: translate(-50%,-50%);
 }
 
+.sub-text{
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
 /*#region IconCss*/
 
 .wrapper {

@@ -1,18 +1,6 @@
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ThemePalette } from '@angular/material/core';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 
-interface Tweet{
-  username: string,
-  content: string,
-  hashtag: string[]
-}
-
-interface ChipColor {
-  name: string;
-  color: ThemePalette;
-}
 
 @Component({
   selector: 'app-home',
@@ -28,8 +16,9 @@ interface ChipColor {
   ],
 })
 export class HomeComponent{
-
-
-  
-
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
 }

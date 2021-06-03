@@ -4,6 +4,12 @@
     right: 10px;
 }
 
+.more-info {
+    position: absolute;
+    top: 5px;
+    right: 40px;
+}
+
 .delete-button{
     position: absolute;
     top: 5px;

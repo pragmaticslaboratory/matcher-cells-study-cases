@@ -8,15 +8,27 @@
 <div class="row home-container">
     <div class="col-md-8">
 
-        <div class="row  mt-5">
+        <div class="row">
+            <div class="col-12 text-end">
+                <button mat-stroked-button color="primary" (click)="openGenerateInputDialog()">Autogenerate</button>
+            </div>
+        </div>
+
+        <div class="row  mt-1">
             <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text">Input Trace</span>
+                  <span class="input-group-text" style="height: 100%">Input Trace</span>
                 </div>
-                <input type="text" class="form-control"  placeholder="acbab" [ngModel]="_input" (ngModelChange)="_input = $event.toLowerCase()" >
-                <div class="input-group-append">
-                    <button class="btn btn-outline-primary" (click)="openGenerateInputDialog()" type="button">Autogenerate</button>
-                </div>
+                <textarea class="form-control" placeholder="acbab" [ngModel]="_input" (ngModelChange)="_input = $event.toLowerCase()"></textarea>
+            </div>
+            
+
+            <div class="form-group">
+                <button type="button" mat-button (click)="fileInput.click()">
+                    <mat-icon>upload_file</mat-icon>
+                    Subir Archivo
+                </button>
+                <input hidden (change)="handleFileInput($event.target.files)" #fileInput type="file" id="file" accept=".txt">
             </div>
     
             <div class="input-group mt-3">
@@ -29,7 +41,12 @@
 
         <div class="row" >
             <div class="col-12 text-end">
-                <mat-checkbox color="primary" class="text-right" [(ngModel)]="_regexActivate">Regex</mat-checkbox>
+                <mat-checkbox 
+                color="primary" 
+                class="text-right"
+                (change)="showOptions($event)" 
+                [(ngModel)]="_regexActivate"
+                >Regex</mat-checkbox>
             </div>
         </div>
         
@@ -110,6 +127,9 @@
             <mat-card-title class="title-card">
                 Cell Evolution Rules
             </mat-card-title>
+            <button mat-icon-button class="more-info" (click)="openInformationDialog()">
+                <mat-icon>help</mat-icon>
+            </button>
             <button mat-icon-button class="more-button" (click)="openAddEvolutionDialog()">
                 <mat-icon>add</mat-icon>
             </button>
@@ -143,7 +163,9 @@
             <mat-card-title class="title-card">
                 Solution Evolution Rules
             </mat-card-title>
-
+            <button mat-icon-button class="more-info" (click)="openInformationDialog()">
+                <mat-icon>help</mat-icon>
+            </button>
             <button mat-icon-button class="more-button" (click)="openAddRuleDialog()">
                 <mat-icon>add</mat-icon>
             </button>

@@ -4,16 +4,29 @@
     </button> -->
     <span>MATCHER CELLS</span>
     <span class="spacer"></span>
-    <button mat-button (click)="navigateRoute('/')">
-      Home
-    </button>
-    <button mat-button (click)="navigateRoute('/offline')">
-      Playground
-    </button>
-    <button mat-button (click)="navigateRoute('/twitter')">
-      Twitter (CS1)
-    </button>
-    <button mat-button (click)="navigateRoute('/trace-execute')">
-      Context-Aware System (CS2)
-    </button>
+    <div *ngIf="innerWidth > 700"> 
+      <button mat-button (click)="navigateRoute('/')">
+        Home
+      </button>
+      <button mat-button (click)="navigateRoute('/offline')">
+        Playground
+      </button>
+      <button mat-button (click)="navigateRoute('/twitter')">
+        Twitter (CS1)
+      </button>
+      <button mat-button (click)="navigateRoute('/trace-execute')">
+        Context-Aware System (CS2)
+      </button>
+    </div>
+    <div *ngIf="innerWidth <= 700">
+      <button mat-icon-button [matMenuTriggerFor]="beforeMenu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <mat-menu #beforeMenu="matMenu" xPosition="before">
+        <button mat-menu-item (click)="navigateRoute('/')">Home</button>
+        <button mat-menu-item (click)="navigateRoute('/offline')">Playground</button>
+        <button mat-menu-item (click)="navigateRoute('/twitter')">Twitter (CS1)</button>
+        <button mat-menu-item (click)="navigateRoute('/trace-execute')">Context-Aware System (CS2)</button>
+      </mat-menu>
+    </div>
 </mat-toolbar>
