@@ -12,6 +12,7 @@ import { Identity } from 'src/app/models/match-cells/rules/identity.model';
 import { Rule } from 'src/app/models/match-cells/rules/rule.interface';
 import { Solution } from 'src/app/models/match-cells/solution.model';
 import { SingletonOffline } from '../../models/singletonOffline.model';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 
 import {MatDialog} from '@angular/material/dialog';
@@ -30,11 +31,6 @@ import { AddEvolutionComponent } from '../../dialogs/add-evolution/add-evolution
 import { CustomEvolution } from '../../models/match-cells/evolution/customevolution.model';
 import { InfoPageComponent } from 'src/app/dialogs/info-page/info-page.component';
 import { AlwaysSeed } from '../../models/match-cells/rules/alwaysseed.model';
-
-
-
-
-
 
 @Component({
   selector: 'app-offline',
@@ -613,5 +609,9 @@ export class OfflineComponent {
 
     dialogRef.afterClosed().subscribe(result => {
     });
+  }
+
+  drop(list: any[], event: CdkDragDrop<any[]>) {
+    moveItemInArray(list, event.previousIndex, event.currentIndex);
   }
 }

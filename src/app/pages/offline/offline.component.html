@@ -134,9 +134,11 @@
                 <mat-icon>add</mat-icon>
             </button>
             <mat-card-content>
-                
-                <mat-list>
+                <mat-list
+                cdkDropList
+                (cdkDropListDropped)="drop(evolution_list ,$event)">
                     <mat-list-item 
+                    cdkDrag
                     style="margin-left: 1rem;"
                     *ngFor="let item of evolution_list; let i = index">
                         <mat-checkbox
@@ -171,7 +173,9 @@
             </button>
         
             <mat-card-content>
-                <mat-list>
+                <mat-list 
+                cdkDropList
+                (cdkDropListDropped)="drop(checkbox_list ,$event)">
 
                     <mat-list-item>
                         <mat-checkbox
@@ -186,6 +190,7 @@
             
                     <mat-list-item 
                     style="margin-left: 1rem;"
+                    cdkDrag
                     *ngFor="let item of checkbox_list; let i = index">
                         <mat-checkbox
                         color="primary"

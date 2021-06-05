@@ -15,9 +15,14 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
     ]),
   ],
 })
-export class HomeComponent{
+export class HomeComponent implements OnInit{
   public innerWidth: any;
   @HostListener('window:resize', ['$event'])
+
+  ngOnInit(){
+    this.onResize(0);
+  }
+
   onResize(event) {
     this.innerWidth = window.innerWidth;
   }
