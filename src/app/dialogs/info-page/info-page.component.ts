@@ -8,10 +8,15 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 })
 export class InfoPageComponent implements OnInit {
 
+  title: string = 'Information';
   constructor(
     public dialogRef: MatDialogRef<InfoPageComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
+  ) {
+    if(data.title){
+      this.title = data.title;
+    }
+  }
 
   ngOnInit(): void {
   }

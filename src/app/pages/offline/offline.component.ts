@@ -31,6 +31,7 @@ import { AddEvolutionComponent } from '../../dialogs/add-evolution/add-evolution
 import { CustomEvolution } from '../../models/match-cells/evolution/customevolution.model';
 import { InfoPageComponent } from 'src/app/dialogs/info-page/info-page.component';
 import { AlwaysSeed } from '../../models/match-cells/rules/alwaysseed.model';
+import informationJson from '../../../assets/data/information.json';
 
 @Component({
   selector: 'app-offline',
@@ -590,18 +591,19 @@ export class OfflineComponent {
 
   showOptions(event){
     if(event.checked){
-      this.openInformationDialog();
+      this.openInformationDialog('regex');
     }
   }
 
-  openInformationDialog(): void {
-    const parrafos: string[] = [
-      "TO DO INFO"
-    ];
-    const list: string [] = [];
+  openInformationDialog(type: string): void {
+    const data: any = informationJson[type];
+    const title: string = data.title;
+    const parrafos: string[] = data.description;
+    const list: string [] = data.items;
     const dialogRef = this.dialog.open(InfoPageComponent, {
       width: '600px',
       data: {
+        title, 
         parrafos,
         list
       }

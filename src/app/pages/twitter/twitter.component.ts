@@ -35,6 +35,8 @@ import { CustomEvolution } from 'src/app/models/match-cells/evolution/customevol
 import { AddEvolutionComponent } from 'src/app/dialogs/add-evolution/add-evolution.component';
 import { ComposableEvolution } from 'src/app/models/match-cells/evolution/composableevolution.model';
 import { AlwaysSeed } from '../../models/match-cells/rules/alwaysseed.model';
+import informationJson from '../../../assets/data/information.json';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-twitter',
@@ -629,7 +631,7 @@ export class TwitterComponent implements OnInit, OnDestroy  {
     this.evolution_list.splice(index,1);
   }
 
-  openInformationDialog(): void {
+  openInformationCaseStudyDialog(): void {
     const parrafos: string[] = [
       "Twitter (Case Study 1). Matcher Cells allows developers to identify a set of tweets that are streaming on the fly. This case study is a Web application that uses Matcher Cells that identify tweets utilizing the composition of different rules of cell and solution evolutions. A particular composition represents a specific matching semantics that can be modified in the execution time with a pattern.",
       "For this case study, we collect 1,000 tweets that are related to the video game subject. A tweet from this collection appears in an interval of n seconds. The user of this application can specify a pattern (using regular expression or not) and a particular semantics to match tweets, which turns red."
@@ -655,7 +657,29 @@ export class TwitterComponent implements OnInit, OnDestroy  {
 
   showOptions(event){
     if(event.checked){
-      this.openInformationDialog();
+      this.openInformationDialog('regex');
     }
+  }
+
+  openInformationDialog(type: string): void {
+    const data: any = informationJson[type];
+    const title: string = data.title;
+    const parrafos: string[] = data.description;
+    const list: string [] = data.items;
+    const dialogRef = this.dialog.open(InfoPageComponent, {
+      width: '600px',
+      data: {
+        title, 
+        parrafos,
+        list
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+    });
+  }
+
+  drop(list: any[], event: CdkDragDrop<any[]>) {
+    moveItemInArray(list, event.previousIndex, event.currentIndex);
   }
 }
