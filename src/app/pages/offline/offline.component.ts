@@ -32,6 +32,7 @@ import { CustomEvolution } from '../../models/match-cells/evolution/customevolut
 import { InfoPageComponent } from 'src/app/dialogs/info-page/info-page.component';
 import { AlwaysSeed } from '../../models/match-cells/rules/alwaysseed.model';
 import informationJson from '../../../assets/data/information.json';
+import { IdentityMatch } from '../../models/match-cells/evolution/identityMatch.model';
 
 @Component({
   selector: 'app-offline',
@@ -43,6 +44,13 @@ export class OfflineComponent {
   fileToUpload: File = null;
 
   evolution_list: any[] = [
+    {
+      name: "Identity Match",
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new IdentityMatch()
+    },
     {
       name: "Only One Match",
       checked: true,

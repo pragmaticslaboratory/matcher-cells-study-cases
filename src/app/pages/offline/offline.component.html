@@ -26,7 +26,7 @@
             <div class="form-group">
                 <button type="button" mat-button (click)="fileInput.click()">
                     <mat-icon>upload_file</mat-icon>
-                    Subir Archivo
+                    Upload File
                 </button>
                 <input hidden (change)="handleFileInput($event.target.files)" #fileInput type="file" id="file" accept=".txt">
             </div>
@@ -67,6 +67,14 @@
         
         <div class="dropdown-divider my-3"></div>
         
+        <div class="text-center">
+            <h5> Result Match </h5>
+        </div>
+
+        <div class="preload-result"  *ngIf="!_regexErrorValidator.active && !_match_complete">
+
+        </div>
+
         <div *ngIf="_regexErrorValidator.active">
             <div class="text-center">
                 <h5>Error Configuration!</h5>
@@ -155,6 +163,8 @@
                 </mat-list>
                 
             </mat-card-content>
+
+            <small>You can change the order by drag and drop the rules*</small>
         </mat-card>
 
 
@@ -208,6 +218,9 @@
             
                 </mat-list>
             </mat-card-content>
+            
+            <small>You can change the order by drag and drop the rules*</small>
+            
         </mat-card>
 
         <div class="dropdown-divider my-3" *ngIf="traceLifeConfigSelected()"></div>

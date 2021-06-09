@@ -37,6 +37,7 @@ import { ComposableEvolution } from 'src/app/models/match-cells/evolution/compos
 import { AlwaysSeed } from '../../models/match-cells/rules/alwaysseed.model';
 import informationJson from '../../../assets/data/information.json';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { IdentityMatch } from '../../models/match-cells/evolution/identityMatch.model';
 
 @Component({
   selector: 'app-twitter',
@@ -66,6 +67,13 @@ export class TwitterComponent implements OnInit, OnDestroy  {
   // OLD STUFF
 
   evolution_list: any[] = [
+    {
+      name: "Identity Match",
+      checked: false,
+      deletable: false,
+      labelPosition: "after",
+      rule: new IdentityMatch()
+    },
     {
       name: "Only One Match",
       checked: true,
