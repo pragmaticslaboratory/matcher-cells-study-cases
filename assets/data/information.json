@@ -1,0 +1,27 @@
+{
+    "cell": {
+        "title": "Cell Rules",
+        "description": ["These rules applied to the behavior of each cell against to a reagent, which means that an isolated in a cell.  These rules can be composed before applying to a cell."],
+        "items": []
+    },
+    "solution": {
+        "title": "Solution Rules",
+        "description": [" These rules applied to the behavior of all cells as solution after each cell reacted to a reagent. These rules can be composed after applying to a cell in an isolated way."],
+        "items": []
+    },
+    "regex":  {
+        "title": "Regex Examples",
+        "description": [
+            "By using regular expressions, you can generate token patterns to suit your search needs for the input you entered. Most of the characters are self-paired. For this playground the only exceptions are called special characters like asterisk (*), plus sign (+) and rounds brackets ( and ).",
+            "Here is a set of examples to use:"
+        ],
+        "items": [
+            "ab  => will match only 'ab'",
+            "a(b)*  => will match 'a','ab','abb','abbb',...",
+            "a(b)+  => will match 'ab','abb','abbb','abbbb',...",
+            "a(b)*(c)+  => will match 'ac','abc','acc','abbbbc',...",
+            "(ab)*(c)*(d)*  => will match '','ab','c','d','abcccd','ababccdds',...",
+            "(abcd)+  => will match 'abcd','abcdabcd','abcdabcdabcd',..."
+        ]
+    }
+}
