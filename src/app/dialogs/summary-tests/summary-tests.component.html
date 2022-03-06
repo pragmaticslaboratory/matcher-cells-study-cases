@@ -1,0 +1,27 @@
+<div mat-dialog-title class="text-center">Summary</div>
+<div mat-dialog-content class="mt-1">
+    <div class="row">
+        <div class="col-12">
+            <table id="summary">
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Time (sec)</th>
+                </tr>
+                <tr *ngFor="let testInformation of testsInformation">
+                    <td>{{testInformation.name}}</td>
+                    <td>{{testInformation.status}}</td>
+                    <td>{{testInformation.finalTime ? testInformation.totalTime : '-'}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12 text-center">
+            Please complete the following <a [href]="EVALUATION_FORM_LINK" id="form">form</a> with the information provided by the table. 
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions class="btns-actions">
+    <button mat-flat-button color="warn" [matDialogClose] >Cancel</button>
+</div>

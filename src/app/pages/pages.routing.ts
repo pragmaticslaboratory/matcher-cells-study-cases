@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { OfflineComponent } from './offline/offline.component';
 import { TwitterComponent } from './twitter/twitter.component';
 import { TraceExecutionComponent } from './trace-execution/trace-execution.component';
+import { UserEvaluationComponent } from './user-evaluation/user-evaluation.component';
 
 const routes: Routes = [
     {
@@ -34,7 +35,12 @@ const routes: Routes = [
             path: 'trace-execute',
             component: TraceExecutionComponent, data: { title: 'Trace Exec. Case' }
             
-          }
+          },
+          {
+            path: 'user-evaluation',
+            component: UserEvaluationComponent, data: { title: 'Usr. Eval.' }
+            
+          },
         ]
     },
 ];

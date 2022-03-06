@@ -1,0 +1,10 @@
+<div mat-dialog-title class="text-center">{{test.name}}</div>
+<div mat-dialog-content class="mt-3">
+    <p>{{ test.content }}</p>
+    <p>El Input solicitado es:  <b>{{ test.input }}</b> </p>
+    <div class="mt-1 btn-container">
+        <button mat-flat-button color="primary" [disabled]="test.started" (click)="startTest()" >Iniciar</button>
+        <button mat-flat-button color="primary" [disabled]="!test.started" (click)="setComplete()" >Completado Exitosamente</button>
+        <button mat-flat-button color="warn" [disabled]="!test.started" (click)="setFailed()" >No Completado</button>
+    </div>
+</div>

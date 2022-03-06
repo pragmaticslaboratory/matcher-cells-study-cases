@@ -1,5 +1,6 @@
 import { trigger, transition, style, animate } from '@angular/animations';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { DataService } from '../../services/data.service';
 
 
 @Component({
@@ -17,9 +18,10 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit{
   public innerWidth: any;
+  
   @HostListener('window:resize', ['$event'])
-
-  ngOnInit(){
+  
+  async ngOnInit(){
     this.onResize(0);
   }
 

@@ -10,15 +10,19 @@ import { AddRuleComponent } from './add-rule/add-rule.component';
 import {MatSelectModule} from '@angular/material/select';
 import { InfoPageComponent } from './info-page/info-page.component';
 import { AddEvolutionComponent } from './add-evolution/add-evolution.component';
+import { MenuTestComponent } from './menu-test/menu-test.component';
+import { SummaryTestsComponent } from './summary-tests/summary-tests.component';
 
 
 @NgModule({
-  declarations: [GenerateInputComponent, AddRuleComponent, InfoPageComponent, AddEvolutionComponent],
+  declarations: [GenerateInputComponent, AddRuleComponent, InfoPageComponent, AddEvolutionComponent, MenuTestComponent, SummaryTestsComponent],
   exports: [
     GenerateInputComponent,
     AddRuleComponent,
     InfoPageComponent,
-    AddEvolutionComponent
+    AddEvolutionComponent,
+    MenuTestComponent,
+    SummaryTestsComponent
   ],
   imports: [
     CommonModule,
@@ -27,7 +31,7 @@ import { AddEvolutionComponent } from './add-evolution/add-evolution.component';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatButtonModule
+    MatButtonModule,
   ]
 })
 export class DialogsModule { }

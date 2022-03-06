@@ -1,0 +1,311 @@
+<!-- HEADER -->
+<div class="row home-container">
+    <div class="col-md-12 text-center mt-3">
+        <h3>USER EVALUATION</h3>
+    </div>
+</div>
+<!-- CONTENT PAGE -->
+<div class="row home-container">
+    <div class="col-md-8">
+
+        <div class="row  mt-1">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" style="height: 100%">Input Trace</span>
+                </div>
+                <textarea disabled class="form-control" placeholder="acbab" [ngModel]="_input" (ngModelChange)="_input = $event.toLowerCase()"></textarea>
+            </div>
+            
+            <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Token</span>
+                </div>
+                <input type="text" class="form-control"  [placeholder]="_regexActivate? 'a(cd)*g' : 'abb'"  [ngModel]="_token" (ngModelChange)="_token = $event.toLowerCase()">
+            </div>
+        </div>
+
+        <div class="row" >
+            <div class="col-12 text-end">
+                <mat-checkbox 
+                color="primary" 
+                class="text-right"
+                (change)="showOptions($event)" 
+                [(ngModel)]="_regexActivate"
+                >Regex</mat-checkbox>
+            </div>
+        </div>
+        
+        <div class="row my-3">
+            <div *ngFor="let test of _testInformation" class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 text-center">
+                <button
+                class="col-12 mt-2"
+                mat-raised-button 
+                [disabled]="currentTestId != -1 && currentTestId != test.id"
+                (click)="openTestDialog(test)" 
+                [color]="test.failed ? 'warn' : 'primary'"
+                >
+                    <mat-icon > {{ test.icon }} </mat-icon>
+                    {{ test.name }}
+                </button>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 text-center">
+                <button
+                    class="col-12 mt-2"
+                    mat-raised-button
+                    [disabled]="currentTestId != -1"
+                    (click)="openSummaryTests()" 
+                    color="primary"
+                >
+                    <mat-icon > summarize </mat-icon>
+                    {{ _testResume.name }}
+                </button>
+            </div>
+        </div>
+
+        <div class="row my-2">
+            <div class="col-12 text-center">
+                <button
+                    class="col-12"
+                    mat-raised-button 
+                    [disabled]="disableMatchButton()"
+                    (click)="matchProcess()" 
+                    color="primary"
+                >
+                    <mat-icon > account_tree </mat-icon>
+                    Match It!
+                </button>
+            </div>
+        </div>
+        
+        <div class="dropdown-divider my-3"></div>
+        
+        <div class="text-center">
+            <h5> Result Match </h5>
+        </div>
+
+        <div class="preload-result"  *ngIf="!_regexErrorValidator.active && !_match_complete">
+
+        </div>
+
+        <div *ngIf="_regexErrorValidator.active">
+            <div class="text-center">
+                <h5>Error Configuration!</h5>
+                <p class="my-2">
+                    <strong>{{_regexErrorValidator.text}}</strong>
+                </p>
+            </div>
+        </div>
+
+
+        <div *ngIf="_match_complete">
+            
+            <div class="text-center">
+                <h5>Token Pattern </h5>
+                <p class="my-2">
+                    <strong>{{_tokenPattern}}</strong>
+                </p>
+            </div>
+    
+            <div class="dropdown-divider my-3"></div>
+            
+
+            <div class="text-center">
+                <h5>Input Trace Match</h5>
+                <div class="skill-list">
+                    <p class="skills" *ngFor="let mathView of _matchViews" [ngClass]="{'match-token':mathView.active}">
+                        {{mathView.text}}
+                     </p>
+                </div>
+            </div>
+
+            <div class="dropdown-divider my-3"></div>
+
+            <div class="text-left my-2">
+                <strong>RESULT: TOTAL {{ getMatches().length }} MATCHES</strong>
+            </div>
+            <div *ngIf="getMatches().length == 0">
+                <strong>There were no matches :c</strong>
+            </div>
+            <ul class="list-group list-rules mb-5 list-matches">
+                <li class="list-group-item" *ngFor="let item of getMatches(); let i = index">
+                    MATCH. {{i}} |   Symbol: {{item.token}} - Token Index: {{item.index}}
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="text-center">
+            <strong>RULES</strong>
+        </div>
+
+        <div class="dropdown-divider my-3"></div>
+
+        <mat-card>
+
+            <mat-card-title class="title-card">
+                Cell Evolution Rules
+            </mat-card-title>
+            <button mat-icon-button class="more-info" (click)="openInformationDialog('cell')">
+                <mat-icon>help</mat-icon>
+            </button>
+            <button mat-icon-button class="more-button" (click)="openAddEvolutionDialog()">
+                <mat-icon>add</mat-icon>
+            </button>
+            <mat-card-content>
+                <mat-list
+                cdkDropList
+                (cdkDropListDropped)="drop(evolution_list ,$event)">
+                    <mat-list-item 
+                    cdkDrag
+                    style="margin-left: 1rem;"
+                    *ngFor="let item of evolution_list; let i = index">
+                        <mat-checkbox
+                        color="primary"
+                        [(ngModel)]="item.checked"
+                        [labelPosition]="item.labelPosition"
+                        >
+                            <strong>{{ item.name }}</strong>
+                        </mat-checkbox>
+                        <button *ngIf="item.deletable" mat-icon-button class="delete-button" (click)="deleteEvolution(i)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </mat-list-item>
+                </mat-list>
+                
+            </mat-card-content>
+
+            <small>You can change the order by drag and drop the rules*</small>
+        </mat-card>
+
+
+        <div class="dropdown-divider my-3"></div>
+
+        <mat-card>
+
+            <mat-card-title class="title-card">
+                Solution Evolution Rules
+            </mat-card-title>
+            <button mat-icon-button class="more-info" (click)="openInformationDialog('solution')">
+                <mat-icon>help</mat-icon>
+            </button>
+            <button mat-icon-button class="more-button" (click)="openAddRuleDialog()">
+                <mat-icon>add</mat-icon>
+            </button>
+        
+            <mat-card-content>
+                <mat-list 
+                cdkDropList
+                (cdkDropListDropped)="drop(checkbox_list ,$event)">
+
+                    <mat-list-item>
+                        <mat-checkbox
+                        color="primary"
+                        [(ngModel)]="master_checked"
+                        [(indeterminate)]="master_indeterminate"
+                        (change)="master_change()"
+                        >
+                            <strong>Check/ Uncheck All</strong>
+                        </mat-checkbox>
+                    </mat-list-item>
+            
+                    <mat-list-item 
+                    style="margin-left: 1rem;"
+                    cdkDrag
+                    *ngFor="let item of checkbox_list; let i = index">
+                        <mat-checkbox
+                        color="primary"
+                        [(ngModel)]="item.checked"
+                        [disabled]="item.disabled"
+                        [labelPosition]="item.labelPosition"
+                        (change)="list_change()"
+                        >
+                            <strong>{{ item.name }}</strong>
+                        </mat-checkbox>
+                        <button *ngIf="item.deletable" mat-icon-button class="delete-button" (click)="deleteRule(i)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </mat-list-item>
+            
+                </mat-list>
+            </mat-card-content>
+            
+            <small>You can change the order by drag and drop the rules*</small>
+            
+        </mat-card>
+
+        <div class="dropdown-divider my-3" *ngIf="traceLifeConfigSelected()"></div>
+
+        <mat-card class="mb-4" *ngIf="traceLifeConfigSelected()">
+            <mat-card-title class="title-card">
+                Trace Life Config
+            </mat-card-title>
+
+            <mat-card-content>
+                <div class="row">
+                    <mat-form-field class="col-xl-6">
+                        <mat-label>Time per match</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_matchTime"
+                        min="0"
+                        type="number" >
+                        <span matSuffix>ms</span>
+                        <mat-hint>Time elapsed after the first match</mat-hint>
+                    </mat-form-field>
+                    <mat-form-field class="col-xl-6">
+                        <mat-label>Life Time</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_lifeTime"
+                        min="0"
+                        type="number" >
+                        <span matSuffix>ms</span>
+                        
+                        <mat-hint>Patterns should be matched before ∆time ends</mat-hint>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+
+        </mat-card>
+
+        <div class="dropdown-divider my-3" *ngIf="customAddSeedSelected()"></div>
+
+        <mat-card class="mb-4" *ngIf="customAddSeedSelected()">
+            <mat-card-title class="title-card">
+                Custom Add Seed
+            </mat-card-title>
+
+            <mat-card-content>
+                <div class="row">
+                    <mat-form-field class="col-xl-12">
+                        <mat-label>Custom Seed</mat-label>
+                        <input 
+                        matInput
+                        [(ngModel)]="_tokenCustomAddSeed"
+                        type="text" >
+                        <mat-hint>Custom token to apply add seed rule</mat-hint>
+                    </mat-form-field>
+                    <div class="col-xl-12 text-end">
+                        <mat-checkbox color="primary" class="text-right" [(ngModel)]="_regexActivateCustomAddSeed">Regex</mat-checkbox>
+                    </div>
+                    <div class="col-xl-12 text-center mt-2">
+                        <button
+                            class="col-md-8"
+                            mat-raised-button 
+                            [disabled]="disableBtnCustomAddSeed()"
+                            (click)="setPatternCustomAddSeedSelected()" 
+                            color="primary"
+                        >
+                            <mat-icon > verified </mat-icon>
+                            Set new pattern
+                        </button>
+                    </div>
+                </div>
+            </mat-card-content>
+
+        </mat-card>
+
+    </div>
+</div>

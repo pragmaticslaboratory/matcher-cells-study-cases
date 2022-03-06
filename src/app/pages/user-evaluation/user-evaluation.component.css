@@ -1,0 +1,24 @@
+.more-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+
+.more-info {
+    position: absolute;
+    top: 5px;
+    right: 40px;
+}
+
+.delete-button{
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+
+.preload-result{
+    background-color: #dcdde4;
+    width: 100%;
+    min-height: 250px;
+    border-radius: 5px;
+}
