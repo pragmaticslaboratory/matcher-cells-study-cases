@@ -36,6 +36,9 @@ import { IdentityMatch } from '../../models/match-cells/evolution/identityMatch.
 import { MenuTestComponent } from '../../dialogs/menu-test/menu-test.component';
 import { SummaryTestsComponent } from '../../dialogs/summary-tests/summary-tests.component';
 import { IUserTest } from '../../interfaces/IUserTest';
+import { DataService } from '../../services/data.service';
+import { IUserTestResponse } from '../../interfaces/IUserTestReponse';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-user-evaluation',
@@ -138,67 +141,31 @@ export class UserEvaluationComponent implements OnInit {
   
   currentTestId = -1;
 
-  _testInformation: IUserTest[] = [
-    {
-      id: 1,
-      name: 'Test 1',
-      icon: 'looks_one',
-      content: 'CONTENT TEST 1',
-      input: 'aaaa',
-      started: false,
-      completed: false,
-      failed: false,
-    },
-    {
-      id: 2,
-      name: 'Test 2',
-      icon: 'looks_two',
-      content: 'CONTENT TEST 2',
-      input: 'bcd',
-      started: false,
-      completed: false,
-      failed: false,
-    },
-    {
-      id: 3,
-      name: 'Test 3',
-      icon: 'looks_3',
-      content: 'CONTENT TEST 3',
-      input: 'fffdf',
-      started: false,
-      completed: false,
-      failed: false,
-    },
-    {
-      id: 4,
-      name: 'Test 4',
-      icon: 'looks_4',
-      content: 'CONTENT TEST 4',
-      input: 'sdasd',
-      started: false,
-      completed: false,
-      failed: false,
-    },
-    {
-      id: 5,
-      name: 'Test 5',
-      icon: 'looks_5',
-      content: 'CONTENT TEST 5',
-      input: 'dasd3sds',
-      started: false,
-      completed: false,
-      failed: false,
-    },
-  ];
+  _testInformation: IUserTest[] = [];
 
   _testResume: any = {
     name: "Resumen de Tests",
     icon: 'summarize'
   }
 
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog, private dataService: DataService) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    const result: IUserTestResponse[] = await this.dataService.getJson<IUserTestResponse[]>(environment.dataUrl).toPromise();
+    console.log(result);
+    this._testInformation = result.map((value) => {
+      return {
+        id: value.id,
+        name: `Test ${value.id}`,
+        icon: 'quiz',
+        content: value.content,
+        input: value.example,
+        expected: value.expected,
+        started: false,
+        completed: false,
+        failed: false,
+      };  
+    });
   }
 
   openTestDialog(test: any): void {

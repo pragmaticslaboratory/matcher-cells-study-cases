@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpHeaders, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,17 @@ export class DataService {
         params: httpParams,
         observe: 'response',
       })
+  }
+
+  getJson<T>(url: string): Observable<T>{
+    return this.http.get<T>(url, {
+      observe: 'events'
+    })
+    .pipe(
+      map(resp => {
+        return resp['body'];
+      })
+    );
   }
 
   /**

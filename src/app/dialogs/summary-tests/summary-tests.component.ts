@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IUserTest } from '../../interfaces/IUserTest';
 import { IUserTestSumary } from '../../interfaces/IUserTestSummary';
 import { EStatusUserTestSummary } from '../../enums/EStatusUserTestSummary';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-summary-tests',
@@ -10,7 +11,7 @@ import { EStatusUserTestSummary } from '../../enums/EStatusUserTestSummary';
   styleUrls: ['./summary-tests.component.css']
 })
 export class SummaryTestsComponent implements OnInit {
-  public readonly EVALUATION_FORM_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLSdvuYk4w-84rlmJg8ULssTi07mIQSNgCSi8_nhNLIrMVw4H0A/viewform';
+  public readonly EVALUATION_FORM_LINK = environment.evaluationFormUrl;
   testsInformation: IUserTestSumary[] = [];
   constructor(
     public dialogRef: MatDialogRef<SummaryTestsComponent>,
