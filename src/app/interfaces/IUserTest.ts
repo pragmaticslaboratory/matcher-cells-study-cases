@@ -8,6 +8,7 @@ export interface IUserTest {
     completed: boolean,
     failed: boolean,
     expected?: string,
+    example?: string,
     initTime?: Date,
     finalTime?: Date
 };
