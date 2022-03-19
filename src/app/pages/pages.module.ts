@@ -24,6 +24,7 @@ import { OfflineComponent } from './offline/offline.component';
 import { TwitterComponent } from './twitter/twitter.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { TraceExecutionComponent } from './trace-execution/trace-execution.component';
+import { UserEvaluationComponent } from './user-evaluation/user-evaluation.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { TraceExecutionComponent } from './trace-execution/trace-execution.compo
     HomeComponent,
     OfflineComponent,
     TwitterComponent,
-    TraceExecutionComponent
+    TraceExecutionComponent,
+    UserEvaluationComponent,
   ],
   exports: [
     PagesComponent,
