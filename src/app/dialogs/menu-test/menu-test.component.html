@@ -1,9 +1,9 @@
 <div mat-dialog-title class="text-center">{{test.name}}</div>
 <div mat-dialog-content class="mt-3">
     <p  [innerHTML]="test.content"></p>
-    <p  [innerHTML]="test.expected"></p>
     <p [innerHTML]="'Input: ' + test.input"></p>
-    <p [innerHTML]="'Example: ' + test.example"></p>
+    <p [innerHTML]="'Resultado Esperado: ' + test.expected"></p>
+    <p [innerHTML]="'Ejemplo: ' + test.example"></p>
     <div class="mt-1 btn-container">
         <button mat-flat-button color="primary" [disabled]="test.started" (click)="startTest()" >Iniciar</button>
         <button mat-flat-button color="primary" [disabled]="!test.started" (click)="setComplete()" >Completado Exitosamente</button>
