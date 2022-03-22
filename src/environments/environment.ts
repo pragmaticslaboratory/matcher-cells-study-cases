@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  dataUrl: 'https://gist.github.com/pleger/c761cfb94bcdf10dee057dc4dfcd9536/json',
+  dataUrl: 'https://gist.githubusercontent.com/pleger/c761cfb94bcdf10dee057dc4dfcd9536/raw/11c0b57db734178732ba931fa23a787e382aded7/json',
   evaluationFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdvuYk4w-84rlmJg8ULssTi07mIQSNgCSi8_nhNLIrMVw4H0A/viewform'
 };
 
