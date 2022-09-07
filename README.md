@@ -1,6 +1,10 @@
-# McTwitterCase
+
+
+
+## Matcher Cells - Playground, Case Studies, and User Evaluations. 
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.9.
+If you want to try the Matcher Cells online, please visit this [link] (https://pragmaticslaboratory.github.io/matcher-cells-study-cases).
 
 ## Development server
 
